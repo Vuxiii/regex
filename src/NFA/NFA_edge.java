@@ -1,5 +1,7 @@
 package src.NFA;
 
+import java.util.List;
+
 
 /**
  * This class represents edges between NFA_states
@@ -22,7 +24,26 @@ public class NFA_edge {
     }
 
     public String toString() {
-        return "Edge " + from.name + " -" + (isEpsilon ? "epsilon" : accept) + "> " + to.name;
+        return "Edge " + from.name() + " -" + (isEpsilon ? "epsilon" : accept) + "> " + to.name();
+    }
+
+    public boolean isEpsilon() {
+        return isEpsilon;
+    }
+
+    public NFA_state to() {
+        // TODO Auto-generated method stub
+        return to;
+    }
+
+    public NFA_state from() {
+        // TODO Auto-generated method stub
+        return from;
+    }
+
+    public char accept() {
+        // TODO Auto-generated method stub
+        return accept;
     }
 
 }

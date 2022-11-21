@@ -55,7 +55,7 @@ public class RegexParser {
 
     // private static DFA_state regexDFA;
 
-    public static DFA_state compileRegex( String regex ) { 
+    public static NFA_state compileRegex( String regex ) { 
         if ( firstSetup )
             setup();
         firstSetup = false;
@@ -73,12 +73,13 @@ public class RegexParser {
         RegexConstructorVisitor reg = new RegexConstructorVisitor();
         AST.accept( reg );
 
-        System.out.println( DFA_state.getStringRepresentation( reg.result ) );
+        // System.out.println( DFA_state.getStringRepresentation( reg.result ) );
 
-        DFA_state dfa = reg.result;
+        NFA_state nfa = reg.result;
 
         // Return the result.
-        return dfa;
+        return nfa;
+        // return NFA_state.toDFA(nfa);
         // return null;
     }
 

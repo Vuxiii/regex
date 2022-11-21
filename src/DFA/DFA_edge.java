@@ -12,4 +12,19 @@ public class DFA_edge {
         accept = c;
     }
 
+    public DFA_state to() {
+        // TODO Auto-generated method stub
+        return to;
+    }
+
+    public DFA_state from() {
+        // TODO Auto-generated method stub
+        return from;
+    }
+
+    public char accept() {
+        // TODO Auto-generated method stub
+        return accept;
+    }
+
 }

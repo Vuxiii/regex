@@ -103,13 +103,13 @@ public class NFA_state {
      * @param to
      */
     public void addEdge( char c, NFA_state to ) {
-        Utils.log( "Adding edge " + name + " -" + c + "> " + to.name );
+        Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
         NFA_edge e = new NFA_edge( c );
         e.from = this;
         e.to = to;
 
         out.add( e );
-        to.in.add( e );
+        to.in().add( e );
 
     }
 
@@ -118,16 +118,17 @@ public class NFA_state {
      * @param to The state to go to.
      */
     public void addEdge( NFA_state to ) {
-        Utils.log( "Adding edge " + name + " -epsilon1> " + to.name );
+        Utils.log( "Adding edge " + name + " -epsilon1> " + to.name() );
 
         NFA_edge e = new NFA_edge();
         e.from = this;
         e.to = to;
 
         out.add( e );
-        to.in.add( e );
+        to.in().add( e );
 
     }
+
 
     /**
      * Consumes all edges matching c from this state.
@@ -257,7 +258,7 @@ public class NFA_state {
         // System.out.println("GetNameFromStates");
         // states.forEach( state -> System.out.println( "\tNFA: " + state.name ) );
         String name = "";
-        for ( NFA_state state : states ) name += state.name + ",";
+        for ( NFA_state state : states ) name += state.name() + ",";
         name = name.substring(0, name.length() - 1);
         return name;
     }
@@ -272,15 +273,15 @@ public class NFA_state {
         while ( input.size() > 0 ) {
             NFA_state state = input.pop();
             
-            if ( visited.contains( state.name ) ) continue;
+            if ( visited.contains( state.name() ) ) continue;
             
-            visited.add( state.name );
+            visited.add( state.name() );
             
-            for ( NFA_edge edge : state.out ) {
-                if ( !edge.isEpsilon ) continue;
+            for ( NFA_edge edge : state.out() ) {
+                if ( !edge.isEpsilon() ) continue;
 
-                output.add( edge.to );   
-                input.add( edge.to );
+                output.add( (NFA_state) edge.to() );   
+                input.add( edge.to() );
             }
         }
 
@@ -297,29 +298,29 @@ public class NFA_state {
     private static void _collectStates( NFA_state nfa, List<NFA_state> q ) {
         if ( q.contains( nfa ) ) return;
         q.add( nfa );
-        for ( NFA_edge e : nfa.out )
-            _collectStates( e.to, q );
+        for ( NFA_edge e : nfa.out() )
+            _collectStates( e.to(), q );
     }
 
-    public NFA_state copy() {
-        NFA_state q = new NFA_state( name, isFinal );
+    // public NFA_state copy() {
+    //     NFA_state q = new NFA_state( name, isFinal );
 
-        for ( NFA_edge e : out ) {
-            NFA_edge ne = new NFA_edge( e.accept );
-            ne.isEpsilon = e.isEpsilon;
-            ne.from = this;
+    //     for ( NFA_edge e : out ) {
+    //         NFA_edge ne = new NFA_edge( e.accept );
+    //         ne.isEpsilon = e.isEpsilon;
+    //         ne.from = this;
             
-            NFA_state nto = e.to.copy();
+    //         NFA_state nto = e.to.copy();
             
-            ne.to = nto;
+    //         ne.to = nto;
 
-            q.out.add( ne );
-            nto.in.add( ne );
-        }
+    //         q.out.add( ne );
+    //         nto.in.add( ne );
+    //     }
 
 
-        return q;
-    }
+    //     return q;
+    // }
 
     public static String getStringRepresentation( NFA_state nfa ) {
         String s = "";
@@ -334,6 +335,26 @@ public class NFA_state {
         }
 
         return s;
+    }
+
+    public String name() {
+        // TODO Auto-generated method stub
+        return name;
+    }
+
+    public List<NFA_edge> in() {
+        // TODO Auto-generated method stub
+        return in;
+    }
+
+    public List<NFA_edge> out() {
+        // TODO Auto-generated method stub
+        return out;
+    }
+
+    public boolean isFinal() {
+        // TODO Auto-generated method stub
+        return isFinal;
     }
     
 }

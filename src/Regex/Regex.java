@@ -11,7 +11,7 @@ public class Regex {
 
     private NFA_state nfa = new NFA_state( "entry", false );
 
-    private static Grammar regexParser = null;
+    // private static Grammar regexParser = null;
 
     public Regex() {
         dfa = NFA_state.toDFA( nfa );
@@ -29,18 +29,21 @@ public class Regex {
 
 
     public void addRegex( String regex ) { // Convert the regex to NFA and add it to the internal NFA
-        // nfa.addEdge( RegexParser.compileRegex( regex ) ); // add edge to DFA!!!!
+        nfa.addEdge( RegexParser.compileRegex( regex ) ); // add edge to DFA!!!!
     }
 
 
-
+    /**
+     * Precondition: The user has called the compile method before calling this method.
+     * @param input The input to match.
+     */
     public void match( String input ) {
+
+        
 
     }
 
     public void compile() { // Convert the internal NFA to a DFA
-
-
-        
+        dfa = NFA_state.toDFA( nfa );
     }
 }

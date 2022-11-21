@@ -23,7 +23,7 @@ public class RegexConstructorVisitor extends VisitorBase {
     public LinkedList<NFA_state> nfaStack;
     public Map<String, Set<NFA_state>> finalStates;
 
-    public DFA_state result;
+    public NFA_state result;
 
 
 
@@ -133,7 +133,8 @@ public class RegexConstructorVisitor extends VisitorBase {
             // System.out.println( "***************" );
             // System.out.println( NFA_state.getStringRepresentation(tok) );
             // System.out.println( "***************" );
-            result = NFA_state.toDFA( tok );
+            // result = NFA_state.toDFA( tok );
+            result = tok;
             // System.out.println( "asd " + result.name );
 
 
