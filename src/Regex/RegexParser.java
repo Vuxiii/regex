@@ -49,6 +49,7 @@ public class RegexParser {
     private static Terminal tDash;
     private static Terminal tAlphs;
     private static Terminal tChar;
+    // private static Terminal tWild;
     private static Terminal tConcat;
     private static Terminal tLParen;
     private static Terminal tRParen;
@@ -131,6 +132,16 @@ public class RegexParser {
                     tokens.add( star );
                     addConcatToken = true;
                 } break;
+                case '.': {
+                    // System.out.println( "FOUND WILD" );
+                    if ( addConcatToken ) {
+                        tokens.add( concat );
+                        addConcatToken = false;
+                    }
+                    tokens.add( new TokenChar( c, tChar, TokenCharKind.WILD ) );
+
+                    addConcatToken = true;
+                } break;
                 case '\\':{
                     c = regex.charAt( ++i );
                 }
@@ -139,7 +150,7 @@ public class RegexParser {
                         tokens.add( concat );
                         addConcatToken = false;
                     }
-                    tokens.add( new TokenChar( c, tChar ) );
+                    tokens.add( new TokenChar( c, tChar, TokenCharKind.CHAR ) );
 
                     addConcatToken = true;
                 } break;
@@ -183,6 +194,7 @@ public class RegexParser {
         tDash = new Terminal( "-" );
         tAlphs = new Terminal( "" ); //??????
         tChar = new Terminal( ":char:" ); //??????
+        // tWild = new Terminal( ":wild:" ); //??????
         tConcat = new Terminal( "->" ); // debug.
         tLParen = new Terminal( "(" ); // debug.
         tRParen = new Terminal( ")" ); // debug.
@@ -260,6 +272,15 @@ public class RegexParser {
             return new TokenRegRepetition( token, nRepetition );
         } );
 
+        // TEST
+        // g.addRuleWithReduceFunction( nRepetition, List.of( tLBracket, tChar, tRBracket ), (tokens) -> {
+        //     TokenL token = (TokenL) tokens.get(0);
+        //     TokenRegStar token = (TokenRegStar) tokens.get(1);
+        //     TokenRegStar token = (TokenRegStar) tokens.get(2);
+        //     return new TokenRegRepetition( token, nRepetition );
+        // } );
+        // TEST
+
         g.addRuleWithReduceFunction( nStar, List.of( tStar ), (tokens) -> {
             TokenRegStar token = (TokenRegStar) tokens.get(0);
             return new TokenRegRepetition( token, nRepetition );
@@ -284,9 +305,16 @@ public class RegexParser {
         } );
 
         g.addRuleWithReduceFunction( nSymbol, List.of( tChar ), (tokens) -> {
+        
             TokenChar token = (TokenChar) tokens.get(0);
             return new TokenRegSymbol( token, nSymbol );
+            
         } );
+
+        // g.addRuleWithReduceFunction( nSymbol, List.of( tWild ), (tokens) -> {
+        //     TokenRegWild token = (TokenRegWild) tokens.get(0);
+        //     return new TokenRegSymbol( token, nSymbol );
+        // } );
         
         table = LRParser.parse( g, nS );
 

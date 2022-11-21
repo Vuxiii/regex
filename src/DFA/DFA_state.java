@@ -51,9 +51,15 @@ public class DFA_state {
         out.add( e );
     }
 
+    public void addEdge( boolean isWild, DFA_state to ) {
+        DFA_edge e = new DFA_edge( isWild );
+        e.to = to;
+        out.add( e );
+    }
+
     public boolean canConsume( char c )  {
         for ( DFA_edge e : out )
-            if ( e.accept() == c )
+            if ( e.accept() == c || e.acceptAny )
                 return true;
         return false;
     }
@@ -61,7 +67,7 @@ public class DFA_state {
     public DFA_state consume( char c ) {
         DFA_edge acceptEdge = null;
         for ( DFA_edge e : out ) {
-            if ( e.accept() == c ) {
+            if ( e.accept() == c || e.acceptAny ) {
                 acceptEdge = e;
                 break;
             }

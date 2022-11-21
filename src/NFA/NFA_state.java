@@ -114,6 +114,21 @@ public class NFA_state {
     }
 
     /**
+     * Adds 
+     * @param to
+     */
+    public void addEdge( boolean isWild, NFA_state to ) {
+        Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
+        NFA_edge e = new NFA_edge( isWild );
+        e.from = this;
+        e.to = to;
+
+        out.add( e );
+        to.in().add( e );
+
+    }
+
+    /**
      * Adds an epsilon edge to the given state.
      * @param to The state to go to.
      */
@@ -180,7 +195,7 @@ public class NFA_state {
         do {
             DFA_state current = queue.pop();
             // System.out.println( "Visiting DFA " + current.name );
-            Map<Character, Set<NFA_state>> reachable = new HashMap<>();
+            Map<NFA_edge, Set<NFA_state>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
             for ( NFA_state state : closure ) {
@@ -192,9 +207,9 @@ public class NFA_state {
                     if ( !reachable.containsKey( edge.accept ) ) {
                         Set<NFA_state> s = new HashSet<>();
                         s.add( edge.to );
-                        reachable.put( edge.accept, s );
+                        reachable.put( edge, s );
                     } else {
-                        reachable.get( edge.accept ).add( edge.to);
+                        reachable.get( edge ).add( edge.to );
                     }
                 }
                 // System.out.print( "\t\tCan go to -> " );
@@ -203,7 +218,7 @@ public class NFA_state {
             }
 
             // Create all these states.
-            for ( Character c : reachable.keySet() ) {
+            for ( NFA_edge c : reachable.keySet() ) {
                 // System.out.println( "At charachter: " + c);
                 Set<NFA_state> NFAStates = reachable.get( c );
                 DFA_state newState;
@@ -220,7 +235,10 @@ public class NFA_state {
                 }
 
                 // Add the edge to it.
-                current.addEdge( c, newState );
+                if ( c.acceptAny )
+                    current.addEdge( (boolean) c.acceptAny, newState );
+                else
+                    current.addEdge( c.accept, newState );
 
                 
             }

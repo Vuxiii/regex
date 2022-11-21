@@ -7,9 +7,12 @@ public class TokenChar implements Token, TokenNumber {
     public final Character value;
     public final Term term;
 
-    public TokenChar( char value, Term term ) {
+    public final TokenCharKind kind;
+
+    public TokenChar( char value, Term term, TokenCharKind kind ) {
         this.value = value;
         this.term = term;
+        this.kind = kind;
     }
 
     public Term getTerm() {

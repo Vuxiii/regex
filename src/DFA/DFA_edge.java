@@ -5,25 +5,29 @@ package src.DFA;
  */
 public class DFA_edge {
     char accept;
+    boolean acceptAny;
     DFA_state to;
     DFA_state from;
 
     public DFA_edge( char c ) {
         accept = c;
+        acceptAny = false;
+    }
+
+    public DFA_edge( boolean wild ) {
+        accept = ' ';
+        acceptAny = wild;
     }
 
     public DFA_state to() {
-        // TODO Auto-generated method stub
         return to;
     }
 
     public DFA_state from() {
-        // TODO Auto-generated method stub
         return from;
     }
 
     public char accept() {
-        // TODO Auto-generated method stub
         return accept;
     }
 

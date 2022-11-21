@@ -1,20 +1,12 @@
 package src.Visitor;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import src.DFA.DFA_state;
 import src.NFA.NFA_state;
 import src.Regex.Token.*;
-// import src.Token.Regex.TokenRegConcat;
-// import src.Token.Regex.TokenRegExp;
-// import src.Token.Regex.TokenRegRepetition;
-// import src.Token.Regex.TokenRegSymbol;
-// import src.Token.Regex.TokenRegUdtryk;
-// import src.Token.Regex.TokenRegUnion;
 import src.Utils.Utils;
 
 public class RegexConstructorVisitor extends VisitorBase {
@@ -61,15 +53,30 @@ public class RegexConstructorVisitor extends VisitorBase {
     public void visit_leaf( Token token ) {
 
         if ( token instanceof TokenChar ) {
-            System.out.println( "tokenChar" );
-            NFA_state charState = new NFA_state();
-            NFA_state end = charState.registerWord( ((TokenChar)token).value + "", true );
-            nfaStack.push( charState );
+            NFA_state state = null;
+            NFA_state end = null;
 
-            addFinish( charState, end );
+            if ( ((TokenChar)token).kind == TokenCharKind.CHAR ) {
+                System.out.println( "tokenChar" );
+                state = new NFA_state();
+                end = state.registerWord( ((TokenChar)token).value + "", true );
 
+                // addFinish( charState, end );
+            } else if  ( ((TokenChar)token).kind == TokenCharKind.WILD ) {
+                System.out.println( "\t\tTokenRegWild" );
+                state = new NFA_state();
+                end = new NFA_state();
+                end.isFinal = true;
+                state.addEdge( true, end );
+    
+            } else {
+                System.out.println( "SOMETHING BAD HAPPEND IN visit_leaf" );
+                System.exit(-1);
+            }
+            nfaStack.push( state );
+            addFinish( state, end );
 
-        }  else if ( token instanceof TokenRegExp ) {
+        } else if ( token instanceof TokenRegExp ) {
             System.out.println( "tokenExp" );
             // TokenRegExp _token = (TokenRegExp) token;
             // if ( _token.right == null ) {

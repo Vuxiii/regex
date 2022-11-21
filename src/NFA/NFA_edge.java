@@ -10,17 +10,25 @@ import java.util.List;
 public class NFA_edge {
     char accept;
     boolean isEpsilon = false;
-
+    boolean acceptAny;
     NFA_state to;
     NFA_state from;
 
     public NFA_edge( char c ) {
         accept = c;
+        acceptAny = false;
+    }
+
+    public NFA_edge( boolean isWild ) {
+        accept = ' ';
+        isEpsilon = false;
+        acceptAny = isWild;
     }
 
     public NFA_edge() {
         accept = ' ';
         this.isEpsilon = true;
+        acceptAny = false;
     }
 
     public String toString() {
@@ -32,17 +40,14 @@ public class NFA_edge {
     }
 
     public NFA_state to() {
-        // TODO Auto-generated method stub
         return to;
     }
 
     public NFA_state from() {
-        // TODO Auto-generated method stub
         return from;
     }
 
     public char accept() {
-        // TODO Auto-generated method stub
         return accept;
     }
 
