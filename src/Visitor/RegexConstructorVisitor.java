@@ -27,7 +27,7 @@ public class RegexConstructorVisitor extends VisitorBase {
     }
 
     // public void preVisit_printme( Token token ) {
-    //     System.out.println( token.toString() );
+        // System.out.println( token.toString() );
     // }
 
     // TODO: Check if this fucks something up...
@@ -61,27 +61,27 @@ public class RegexConstructorVisitor extends VisitorBase {
             NFA_state end = null;
 
             if ( ((TokenChar)token).kind == TokenCharKind.CHAR ) {
-                System.out.println( "tokenChar" );
+                // System.out.println( "tokenChar" );
                 state = new NFA_state();
                 end = state.registerWord( ((TokenChar)token).value + "", true );
 
                 // addFinish( charState, end );
             } else if  ( ((TokenChar)token).kind == TokenCharKind.WILD ) {
-                System.out.println( "\t\tTokenRegWild" );
+                // System.out.println( "\t\tTokenRegWild" );
                 state = new NFA_state();
                 end = new NFA_state();
                 end.isFinal = true;
                 state.addEdge( true, end );
     
             } else {
-                System.out.println( "SOMETHING BAD HAPPEND IN visit_leaf" );
+                // System.out.println( "SOMETHING BAD HAPPEND IN visit_leaf" );
                 System.exit(-1);
             }
             nfaStack.push( state );
             addFinish( state, end );
 
         } else if ( token instanceof TokenRegExp ) {
-            System.out.println( "tokenExp" );
+            // System.out.println( "tokenExp" );
             // TokenRegExp _token = (TokenRegExp) token;
             // if ( _token.right == null ) {
                 // DO nothing?
@@ -89,7 +89,7 @@ public class RegexConstructorVisitor extends VisitorBase {
             
             // }
         } else if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
-            System.out.println( "tokenRep" );
+            // System.out.println( "tokenRep" );
             TokenRegRepetition _token = (TokenRegRepetition) token;
 
             NFA_state start = new NFA_state();
@@ -128,38 +128,24 @@ public class RegexConstructorVisitor extends VisitorBase {
 
         } else if ( token instanceof TokenRegUdtryk ) {
             
-            System.out.println( "tokenUdtryk" );
+            // System.out.println( "tokenUdtryk" );
 
 
         } 
         // System.out.println( nfaStack.size() );
     }
 
-    public void postVisit_root( Token token ) {
-        System.out.println( nfaStack.size() );
-        if ( token instanceof TokenRoot ) {
-            System.out.println( "tokenRoot" );
-            // TokenRoot _token = (TokenRoot) token;
-            // Convert to dfa. or not.
-            NFA_state tok = nfaStack.pop();
-            System.out.println( "***************" );
-            System.out.println( NFA_state.getStringRepresentation(tok) );
-            System.out.println( "***************" );
-            // result = NFA_state.toDFA( tok );
-            result = tok;
-            // System.out.println( "asd " + result.name );
-
-
-        } else if ( token instanceof TokenRegConcat ) {
-            System.out.println( "tokenConcat" );
+    public void postVisit_concat( Token token ) {
+        if ( token instanceof TokenRegConcat ) {
+            // System.out.println( "tokenConcat" );
             TokenRegConcat _token = (TokenRegConcat) token;
             if ( _token.right == null ) {
                 // Do nothing?
 
-                System.out.println( "In do nothing...");
-                System.out.println( _token );
+                // System.out.println( "In do nothing...");
+                // System.out.println( _token );
             } else {
-                System.out.println( "We have a left and a right!!!!" );
+                // System.out.println( "We have a left and a right!!!!" );
                 NFA_state right = nfaStack.pop();
                 NFA_state left = nfaStack.pop();
 
@@ -167,7 +153,7 @@ public class RegexConstructorVisitor extends VisitorBase {
 
                 concat.addEdge(left);
                 for ( NFA_state leftFinish : getFinish( left ) ) {
-                    System.out.println( "finish.....");
+                    // System.out.println( "finish.....");
                     leftFinish.addEdge(right);
                     leftFinish.isFinal = false;
                 }
@@ -179,11 +165,15 @@ public class RegexConstructorVisitor extends VisitorBase {
 
                 nfaStack.push( concat );
 
-                System.out.println( NFA_state.getStringRepresentation( concat ) );
+                // System.out.println( NFA_state.getStringRepresentation( concat ) );
 
             }
-        } else if ( token instanceof TokenRegUnion ) {
-            System.out.println( "tokenUnion" );
+        }
+    }
+
+    public void postVisit_union( Token token ) {
+        if ( token instanceof TokenRegUnion ) {
+            // System.out.println( "tokenUnion" );
             TokenRegUnion _token = (TokenRegUnion) token;
             if ( _token.right == null ) {
                 // Do nothing?
@@ -206,17 +196,21 @@ public class RegexConstructorVisitor extends VisitorBase {
                     addFinish( union, newFinish );
                 }
 
-                System.out.println( "Union" + union.name + " has finish states:");
-                System.out.println( getFinish( union ));
+                // System.out.println( "Union" + union.name + " has finish states:");
+                // System.out.println( getFinish( union ));
 
 
                 clearFinish( left );
                 clearFinish( right );
 
-                System.out.println( NFA_state.getStringRepresentation( union ) );
+                // System.out.println( NFA_state.getStringRepresentation( union ) );
             }
-        } else if ( token instanceof TokenRegSymbol ) {
-            System.out.println( "tokenSym" );
+        }
+    }
+
+    public void postVisit_symbol( Token token ) {
+        if ( token instanceof TokenRegSymbol ) {
+            // System.out.println( "tokenSym" );
             TokenRegSymbol _token = (TokenRegSymbol) token;
             // sym -> ( nExp )
             if ( _token.value instanceof TokenRegExp ) {
@@ -228,16 +222,20 @@ public class RegexConstructorVisitor extends VisitorBase {
                 // NFA_state charState = nfaStack.pop(); 
 
             }
-        } else if ( token instanceof TokenRegRange ) {
-            System.out.println( "TokenRegRange" );
+        }
+    }
+
+    public void postVisit_range( Token token ) {
+        if ( token instanceof TokenRegRange ) {
+            // System.out.println( "TokenRegRange" );
             TokenRegRange _token = (TokenRegRange) token;
             if ( _token.right == null ) {
                 if ( _token.kind == TokenRangeKind.INT ) {
-                    System.out.println( "*****************************************************************'" );
-                    System.out.println( "In tokenRangeInt" );
+                    // System.out.println( "*****************************************************************'" );
+                    // System.out.println( "In tokenRangeInt" );
                     
                     int reps = ((TokenRegDigit)_token.left).value;
-                    System.out.println( "REPS: " + reps );
+                    // System.out.println( "REPS: " + reps );
                     
                     NFA_state anchor = null;
 
@@ -248,7 +246,7 @@ public class RegexConstructorVisitor extends VisitorBase {
                     nfaStack.push( start );
 
                     for ( int i = 0; i < reps; ++i ) {
-                        System.out.println( "Rep: " + i );
+                        // System.out.println( "Rep: " + i );
                         
                         NFA_state current = stateToRepeat.copy();
                         
@@ -260,7 +258,7 @@ public class RegexConstructorVisitor extends VisitorBase {
                         
 
                         for ( NFA_state finish : NFA_state.collectFinals( current ) ) {
-                            System.out.println( "akjshdaiuhdasd" );
+                            // System.out.println( "akjshdaiuhdasd" );
                             finish.addEdge( anchor );
                             finish.isFinal = false;
                         }
@@ -268,17 +266,17 @@ public class RegexConstructorVisitor extends VisitorBase {
                         // clearFinish( current );
                         
                         // addFinish( newStart, anchor );
-                        System.out.println( NFA_state.getStringRepresentation( start ) );
+                        // System.out.println( NFA_state.getStringRepresentation( start ) );
 
 
                         start = anchor;
                      
                     }
                     addFinish( nfaStack.peek(), anchor );
-                    System.out.println( "-------------------------");
-                    System.out.println( NFA_state.getStringRepresentation( nfaStack.peek() ) );
-                    System.out.println( "-------------------------");
-                    System.out.println( "-------------------------");
+                    // System.out.println( "-------------------------");
+                    // System.out.println( NFA_state.getStringRepresentation( nfaStack.peek() ) );
+                    // System.out.println( "-------------------------");
+                    // System.out.println( "-------------------------");
 
 
                     // Single value;
@@ -292,28 +290,46 @@ public class RegexConstructorVisitor extends VisitorBase {
 
 
                 } else if ( _token.kind == TokenRangeKind.CHAR ) {
-                    System.out.println( "FAILURE");
+                    // System.out.println( "FAILURE");
                     System.exit( -1 );
                     
                 } else {
-                    System.out.println( "FAILURE");
+                    // System.out.println( "FAILURE");
                     System.exit( -1 );
                 }
             } else {
                 if ( _token.kind == TokenRangeKind.INT ) {
-                    System.out.println( "FAILURE");
+                    // System.out.println( "FAILURE");
                     System.exit( -1 );
 
                 } else if ( _token.kind == TokenRangeKind.CHAR ) {
-                    System.out.println( "FAILURE");
+                    // System.out.println( "FAILURE");
                     System.exit( -1 );
                     
                 } else {
-                    System.out.println( "FAILURE");
+                    // System.out.println( "FAILURE");
                     System.exit( -1 );
                 }
             }
             
+
+        } 
+    }
+
+    public void postVisit_root( Token token ) {
+        // System.out.println( nfaStack.size() );
+        if ( token instanceof TokenRoot ) {
+            // System.out.println( "tokenRoot" );
+            // TokenRoot _token = (TokenRoot) token;
+            // Convert to dfa. or not.
+            NFA_state tok = nfaStack.pop();
+            // System.out.println( "***************" );
+            // System.out.println( NFA_state.getStringRepresentation(tok) );
+            // System.out.println( "***************" );
+            // result = NFA_state.toDFA( tok );
+            result = tok;
+            // System.out.println( "asd " + result.name );
+
 
         } 
     }

@@ -73,7 +73,7 @@ public class ParsingStep {
         Token element = inputPeek();
 
         // Utils.log( "We are currently in state: " + currentState.current_state.id );
-        Utils.log( "We are currently in state: " + table.states.get( currentState.current_state.id ).current_state.id );
+        // Utils.log( "We are currently in state: " + table.states.get( currentState.current_state.id ).current_state.id );
         // System.out.println( currentState.equals(table.states.get( currentState.current_state.id )));
         // System.out.println( currentState == table.states.get( currentState.current_state.id ));
 
@@ -82,15 +82,15 @@ public class ParsingStep {
 
         
 
-        Utils.log( element + " -> term: " + element.getTerm() );
+        // Utils.log( element + " -> term: " + element.getTerm() );
 
         ParseAction action = table.getAction( currentState.current_state.id, element.getTerm() );
         // Utils.log( action );
 
         if ( action instanceof ParseShift ) {
-            Utils.log( "In Shift" );
+            // Utils.log( "In Shift" );
             ParseShift act = (ParseShift) action;
-            Utils.log( "id: " + act.id() );
+            // Utils.log( "id: " + act.id() );
             ParsingStep nextStep = new ParsingStep( input, tempInput, stack, reduceStack, table );
             
             // System.out.println( currentState.current_state );
@@ -102,7 +102,7 @@ public class ParsingStep {
             return nextStep;
 
         } else if ( action instanceof ParseGoto ) {
-            Utils.log( "In Goto" );
+            // Utils.log( "In Goto" );
 
             ParseGoto act = (ParseGoto) action;
 
@@ -116,14 +116,14 @@ public class ParsingStep {
 
 
         } else if ( action instanceof ParseReduce ) {
-            Utils.log( "In Reduce" );
+            // Utils.log( "In Reduce" );
             
             ParseReduce act = (ParseReduce) action;
 
             ParsingStep nextStep = new ParsingStep( input, tempInput, stack, reduceStack, table );
             
             int size = act.rule.size();
-            Utils.log( "Rule size is: " + size );
+            // Utils.log( "Rule size is: " + size );
 
             LinkedList<Token> tokenParams = new LinkedList<>();
             for ( int i = 0; i < size; ++i ) {
@@ -139,7 +139,7 @@ public class ParsingStep {
 
 
         } else if ( action instanceof ParseAccept ) {
-            Utils.log( "In Accept" );
+            // Utils.log( "In Accept" );
             
             ParseAccept act = (ParseAccept) action;
 
@@ -148,9 +148,9 @@ public class ParsingStep {
             nextStep.tempInput.add( nextStep.inputPop() );
 
             int size = act.rule.size();
-            Utils.log( "Rule size is: " + size );
-            System.out.println( nextStep.tempInput.size() );
-            System.out.println( nextStep.tempInput );
+            // Utils.log( "Rule size is: " + size );
+            // System.out.println( nextStep.tempInput.size() );
+            // System.out.println( nextStep.tempInput );
             LinkedList<Token> tokenParams = new LinkedList<>();
             for ( int i = 0; i < size; ++i ) {
                 nextStep.stackPop();
@@ -177,7 +177,7 @@ public class ParsingStep {
             System.exit(-1);
         }
 
-        Utils.log( action.toString() );
+        // Utils.log( action.toString() );
 
         return null;
     }

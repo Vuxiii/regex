@@ -85,8 +85,8 @@ public class ParseTable {
         for ( int i = 0; i < getAction.size(); ++i ) {
             Map<Term, ParseAction> state = getAction.get( i );
         
-            System.out.println( "State: " + i ); 
-            state.forEach( (t, action) -> System.out.println( "\t" + t.toString() + "\t-> " + action.toString() ) ); 
+            // System.out.println( "State: " + i ); 
+            // state.forEach( (t, action) -> System.out.println( "\t" + t.toString() + "\t-> " + action.toString() ) ); 
         
         }
 

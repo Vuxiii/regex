@@ -90,10 +90,10 @@ public class RegexParser {
         ParsingStep currentStep = new ParsingStep(tokens, new LinkedList<>(), stack, new LinkedList<>(), table );
 
         while ( !currentStep.isFinished ) {
-            Utils.log( currentStep );
+            // Utils.log( currentStep );
             currentStep = currentStep.step();
         }
-        System.out.println( currentStep );
+        // System.out.println( currentStep );
         Token AST = currentStep.getResult();
 
         System.out.println( "Final result is: " + AST );
@@ -112,11 +112,11 @@ public class RegexParser {
         TokenRegStar star = new TokenRegStar( tStar );
         TokenRegOperator concat = new TokenRegOperator( tConcat );
         TokenEOP tOEP = new TokenEOP( tDollar );
-        System.out.println( regex );
+        // System.out.println( regex );
         boolean addConcatToken = false;
         for ( int i = 0; i < regex.length(); ++i ) {
             char c = regex.charAt( i );
-            System.out.println( "at char: " + c);
+            // System.out.println( "at char: " + c);
             switch (c) {
                 case '(':{
                     tokens.add( lparen );
@@ -305,7 +305,7 @@ public class RegexParser {
 
         // TEST
         g.addRuleWithReduceFunction( nRepetition, List.of( tLCurl, nRange, tRCurl ), (tokens) -> {
-            System.out.println( "In reduce with { RANGE }" );
+            // System.out.println( "In reduce with { RANGE }" );
             TokenLCurl lcurl = (TokenLCurl) tokens.get(0);
             TokenRegRange token = (TokenRegRange) tokens.get(1);
             TokenRCurl rcurl = (TokenRCurl) tokens.get(2);

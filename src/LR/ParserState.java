@@ -2,8 +2,6 @@ package src.LR;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-
 import src.Regex.Token.Token;
 
 public class ParserState {
@@ -11,7 +9,7 @@ public class ParserState {
     // public Term accept;
 
     // public final Map< Term, Function<ParserState, ParserState> > accepter; // Probably change this to a hashMap instead of the function shite.
-    public final Map< Term, ParserState > accepter; // Probably change this to a hashMap instead of the function shite.
+    private final Map< Term, ParserState > accepter; // Probably change this to a hashMap instead of the function shite.
 
     public final boolean isError;
     public final String errorMsg;
@@ -50,9 +48,9 @@ public class ParserState {
 
 
     public ParserState eat( Token t ) {
-        System.out.println( current_state.id );
-        System.out.println( accepter.keySet() );
-        System.out.println( isError );
+        // System.out.println( current_state.id );
+        // System.out.println( accepter.keySet() );
+        // System.out.println( isError );
         return accepter.get( t.getTerm() );
         // return accepter.get( t.getTerm() ).apply( this );
     }

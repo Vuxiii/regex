@@ -34,7 +34,7 @@ public class NFA_state {
         out = new ArrayList<>();
         in = new ArrayList<>();
 
-        Utils.log( "-".repeat(10));
+        // Utils.log( "-".repeat(10));
         
     }
 
@@ -103,7 +103,7 @@ public class NFA_state {
      * @param to
      */
     public void addEdge( char c, NFA_state to ) {
-        Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
+        // Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
         NFA_edge e = new NFA_edge( c );
         e.from = this;
         e.to = to;
@@ -118,7 +118,7 @@ public class NFA_state {
      * @param to
      */
     public void addEdge( boolean isWild, NFA_state to ) {
-        Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
+        // Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
         NFA_edge e = new NFA_edge( isWild );
         e.from = this;
         e.to = to;
@@ -133,7 +133,7 @@ public class NFA_state {
      * @param to The state to go to.
      */
     public void addEdge( NFA_state to ) {
-        Utils.log( "Adding edge " + name + " -epsilon1> " + to.name() );
+        // Utils.log( "Adding edge " + name + " -epsilon1> " + to.name() );
 
         NFA_edge e = new NFA_edge();
         e.from = this;
@@ -194,16 +194,16 @@ public class NFA_state {
         queue.add( dfaBegin );
         do {
             DFA_state current = queue.pop();
-            System.out.println( "Visiting DFA " + current.name );
+            // System.out.println( "Visiting DFA " + current.name );
             Map<NFA_edge, Set<NFA_state>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
             for ( NFA_state state : closure ) {
-                System.out.println( "At NFA: " + state.name );
+                // System.out.println( "At NFA: " + state.name );
                 for ( NFA_edge edge : state.out ) {
                     if ( edge.isEpsilon ) continue;
                     
-                    System.out.println( "\tChecking edge: " + edge );
+                    // System.out.println( "\tChecking edge: " + edge );
                     if ( !reachable.containsKey( edge ) ) {
                         Set<NFA_state> s = new HashSet<>();
                         s.add( edge.to );
@@ -212,25 +212,25 @@ public class NFA_state {
                         reachable.get( edge ).add( edge.to );
                     }
                 }
-                System.out.print( "\t\tCan go to -> " );
-                reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
-                System.out.println();
+                // System.out.print( "\t\tCan go to -> " );
+                // reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
+                // System.out.println();
             }
 
             // Create all these states.
             for ( NFA_edge c : reachable.keySet() ) {
-                System.out.println( "At charachter: " + c);
+                // System.out.println( "At charachter: " + c);
                 Set<NFA_state> NFAStates = reachable.get( c );
                 DFA_state newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
-                    System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
                     newState = cachedStates.get( NFAStates );
                 }  else {
                     newState = new DFA_state( genNameFromStates( NFAStates ) );
                     cachedStates.put( NFAStates, newState );
                     DFAToNFA.put( newState, NFAStates );
-                    System.out.println( "Creating new State: " + newState.name );
+                    // System.out.println( "Creating new State: " + newState.name );
                     queue.add( newState ); // Might need to move this outside of this clause.
                 }
 
@@ -242,8 +242,8 @@ public class NFA_state {
 
                 
             }
-            System.out.println( "Queue:" );
-            queue.forEach( nfa -> System.out.println( "\t" + nfa.name ) );
+            // System.out.println( "Queue:" );
+            // queue.forEach( nfa -> System.out.println( "\t" + nfa.name ) );
             current = queue.peek();
             if ( current == null ) break; // lmao...
             closure = computeEpsilonClosure( DFAToNFA.get( current ) );
@@ -251,18 +251,18 @@ public class NFA_state {
 
             DFAToNFA.put( current, closure ); // :0
 
-            System.out.println( "Closure:\n" + closure.toString() );
+            // System.out.println( "Closure:\n" + closure.toString() );
 
-            System.out.println( "ASDASDASD " + current.name );
+            // System.out.println( "ASDASDASD " + current.name );
 
         } while ( queue.size() > 0 );
 
-        System.out.println( "---------------------**********************'" );
+        // System.out.println( "---------------------**********************'" );
         // Set the ending states
-        System.out.println( DFAToNFA );
-        System.out.println( "Setting finish states for DFA" );
+        // System.out.println( DFAToNFA );
+        // System.out.println( "Setting finish states for DFA" );
         for ( DFA_state dfa : DFAToNFA.keySet() ) {
-            System.out.println( "checking DFA state" + dfa.name );
+            // System.out.println( "checking DFA state" + dfa.name );
             for ( NFA_state nfa : DFAToNFA.get( dfa ) ) {
                 if ( nfa.isFinal ) {
                     dfa.isFinal = true;
@@ -270,7 +270,7 @@ public class NFA_state {
                 }
             }
         }
-        System.out.println( "END finish states for DFA" );
+        // System.out.println( "END finish states for DFA" );
 
         return dfaBegin;
     }
@@ -323,10 +323,10 @@ public class NFA_state {
                 input.add( edge.to() );
             }
         }
-        System.out.println( "-.-.-.-.-.-.-.-.-.-" );
+        // System.out.println( "-.-.-.-.-.-.-.-.-.-" );
 
-        System.out.println( output );
-        System.out.println( "-.-.-.-.-.-.-.-.-.-" );
+        // System.out.println( output );
+        // System.out.println( "-.-.-.-.-.-.-.-.-.-" );
 
         return output;
     }
