@@ -106,11 +106,13 @@ public class RegexParser {
 
         TokenLParen lparen = new TokenLParen( tLParen );
         TokenRParen rparen = new TokenRParen( tRParen );
+        TokenLCurl lcurl = new TokenLCurl( tLCurl );
+        TokenRCurl rcurl = new TokenRCurl( tRCurl );
         TokenRegOperator union = new TokenRegOperator( tUnion );
         TokenRegStar star = new TokenRegStar( tStar );
         TokenRegOperator concat = new TokenRegOperator( tConcat );
         TokenEOP tOEP = new TokenEOP( tDollar );
-
+        System.out.println( regex );
         boolean addConcatToken = false;
         for ( int i = 0; i < regex.length(); ++i ) {
             char c = regex.charAt( i );
@@ -122,6 +124,14 @@ public class RegexParser {
                 } break;
                 case ')':{
                     tokens.add( rparen );
+                    addConcatToken = true;
+                } break;
+                case '{':{
+                    tokens.add( lcurl );
+                    addConcatToken = false;
+                } break;
+                case '}':{
+                    tokens.add( rcurl );
                     addConcatToken = true;
                 } break;
                 case '|':{
@@ -150,8 +160,18 @@ public class RegexParser {
                         tokens.add( concat );
                         addConcatToken = false;
                     }
-                    tokens.add( new TokenChar( c, tChar, TokenCharKind.CHAR ) );
-
+                    if ( Character.isDigit(c) ) { // Also check for negative numbers (maybe?)
+                        int end = i;
+                        char otherC = regex.charAt(end);
+                        while ( Character.isDigit( otherC ) ) {
+                            end++;
+                            otherC = regex.charAt(end);
+                        }
+                        tokens.add( new TokenRegDigit( Integer.parseInt( regex.substring( i, end ) ), tDigits ) );
+                        i = --end;
+                    } else {
+                        tokens.add( new TokenChar( c, tChar, TokenCharKind.CHAR ) );
+                    }
                     addConcatToken = true;
                 } break;
             }
@@ -186,7 +206,7 @@ public class RegexParser {
         // Terminal tWild = new Terminal( "." );
         tEpsilon = new Terminal();
         tLCurl = new Terminal( "{" );
-        tDigits = new Terminal( "" ); // ?????????
+        tDigits = new Terminal( ":digit:" ); // ?????????
         tRCurl = new Terminal( "}" );
         tComma = new Terminal( "," );
         tLBracket = new Terminal( "[" );
@@ -243,18 +263,6 @@ public class RegexParser {
             return new TokenRegExp( token, nExp );
         } );
 
-        g.addRuleWithReduceFunction( nConcat, List.of( nUdtryk, tConcat, nConcat ), (tokens) -> {
-            TokenRegUdtryk left = (TokenRegUdtryk) tokens.get(0);
-            TokenRegConcat right = (TokenRegConcat) tokens.get(2);
-            TokenOperator operator = (TokenOperator) tokens.get(1);
-            return new TokenRegConcat( left, right, operator, nConcat );
-        } );
-
-        g.addRuleWithReduceFunction( nConcat, List.of( nUdtryk ), (tokens) -> {
-            TokenRegUdtryk token = (TokenRegUdtryk) tokens.get(0);
-            return new TokenRegConcat( token, nConcat );
-        } );
-
         g.addRuleWithReduceFunction( nUnion, List.of( nConcat, tUnion, nUnion ), (tokens) -> {
             TokenRegConcat left = (TokenRegConcat) tokens.get(0);
             TokenRegUnion right = (TokenRegUnion) tokens.get(2);
@@ -267,23 +275,16 @@ public class RegexParser {
             return new TokenRegUnion( token, nUnion );
         } );
 
-        g.addRuleWithReduceFunction( nRepetition, List.of( nStar ), (tokens) -> {
-            TokenRegStar token = (TokenRegStar) tokens.get(0);
-            return new TokenRegRepetition( token, nRepetition );
+        g.addRuleWithReduceFunction( nConcat, List.of( nUdtryk, tConcat, nConcat ), (tokens) -> {
+            TokenRegUdtryk left = (TokenRegUdtryk) tokens.get(0);
+            TokenRegConcat right = (TokenRegConcat) tokens.get(2);
+            TokenOperator operator = (TokenOperator) tokens.get(1);
+            return new TokenRegConcat( left, right, operator, nConcat );
         } );
 
-        // TEST
-        // g.addRuleWithReduceFunction( nRepetition, List.of( tLBracket, tChar, tRBracket ), (tokens) -> {
-        //     TokenL token = (TokenL) tokens.get(0);
-        //     TokenRegStar token = (TokenRegStar) tokens.get(1);
-        //     TokenRegStar token = (TokenRegStar) tokens.get(2);
-        //     return new TokenRegRepetition( token, nRepetition );
-        // } );
-        // TEST
-
-        g.addRuleWithReduceFunction( nStar, List.of( tStar ), (tokens) -> {
-            TokenRegStar token = (TokenRegStar) tokens.get(0);
-            return new TokenRegRepetition( token, nRepetition );
+        g.addRuleWithReduceFunction( nConcat, List.of( nUdtryk ), (tokens) -> {
+            TokenRegUdtryk token = (TokenRegUdtryk) tokens.get(0);
+            return new TokenRegConcat( token, nConcat );
         } );
 
         g.addRuleWithReduceFunction( nUdtryk, List.of( nSymbol, nRepetition ), (tokens) -> {
@@ -295,6 +296,32 @@ public class RegexParser {
         g.addRuleWithReduceFunction( nUdtryk, List.of( nSymbol ), (tokens) -> {
             TokenRegSymbol token = (TokenRegSymbol) tokens.get(0);
             return new TokenRegUdtryk( token, nUdtryk );
+        } );
+
+        g.addRuleWithReduceFunction( nRepetition, List.of( nStar ), (tokens) -> {
+            TokenRegStar token = (TokenRegStar) tokens.get(0);
+            return new TokenRegRepetition( token, nRepetition );
+        } );
+
+        // TEST
+        g.addRuleWithReduceFunction( nRepetition, List.of( tLCurl, nRange, tRCurl ), (tokens) -> {
+            System.out.println( "In reduce with { RANGE }" );
+            TokenLCurl lcurl = (TokenLCurl) tokens.get(0);
+            TokenRegRange token = (TokenRegRange) tokens.get(1);
+            TokenRCurl rcurl = (TokenRCurl) tokens.get(2);
+            return new TokenRegRepetition( lcurl, token, rcurl, nRepetition );
+        } );
+
+        g.addRuleWithReduceFunction( nRange, List.of( tDigits ), (tokens) -> {
+            TokenRegDigit digits = (TokenRegDigit) tokens.get(0);
+            return new TokenRegRange( digits, TokenRangeKind.INT, nRange );
+        } );
+
+        // TEST
+
+        g.addRuleWithReduceFunction( nStar, List.of( tStar ), (tokens) -> {
+            TokenRegStar token = (TokenRegStar) tokens.get(0);
+            return new TokenRegRepetition( token, nRepetition );
         } );
 
         g.addRuleWithReduceFunction( nSymbol, List.of( tLParen, nExp, tRParen ), (tokens) -> {

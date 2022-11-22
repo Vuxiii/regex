@@ -194,17 +194,17 @@ public class NFA_state {
         queue.add( dfaBegin );
         do {
             DFA_state current = queue.pop();
-            // System.out.println( "Visiting DFA " + current.name );
+            System.out.println( "Visiting DFA " + current.name );
             Map<NFA_edge, Set<NFA_state>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
             for ( NFA_state state : closure ) {
-                // System.out.println( "At NFA: " + state.name );
+                System.out.println( "At NFA: " + state.name );
                 for ( NFA_edge edge : state.out ) {
                     if ( edge.isEpsilon ) continue;
                     
-                    // System.out.println( "\tChecking edge: " + edge );
-                    if ( !reachable.containsKey( edge.accept ) ) {
+                    System.out.println( "\tChecking edge: " + edge );
+                    if ( !reachable.containsKey( edge ) ) {
                         Set<NFA_state> s = new HashSet<>();
                         s.add( edge.to );
                         reachable.put( edge, s );
@@ -212,25 +212,25 @@ public class NFA_state {
                         reachable.get( edge ).add( edge.to );
                     }
                 }
-                // System.out.print( "\t\tCan go to -> " );
-                // reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
-                // System.out.println();
+                System.out.print( "\t\tCan go to -> " );
+                reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
+                System.out.println();
             }
 
             // Create all these states.
             for ( NFA_edge c : reachable.keySet() ) {
-                // System.out.println( "At charachter: " + c);
+                System.out.println( "At charachter: " + c);
                 Set<NFA_state> NFAStates = reachable.get( c );
                 DFA_state newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
-                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                    System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
                     newState = cachedStates.get( NFAStates );
                 }  else {
                     newState = new DFA_state( genNameFromStates( NFAStates ) );
                     cachedStates.put( NFAStates, newState );
                     DFAToNFA.put( newState, NFAStates );
-                    // System.out.println( "Creating new State: " + newState.name );
+                    System.out.println( "Creating new State: " + newState.name );
                     queue.add( newState ); // Might need to move this outside of this clause.
                 }
 
@@ -242,21 +242,27 @@ public class NFA_state {
 
                 
             }
-            // System.out.println( "Queue:" );
-            // queue.forEach( nfa -> System.out.println( "\t" + nfa.name ) );
+            System.out.println( "Queue:" );
+            queue.forEach( nfa -> System.out.println( "\t" + nfa.name ) );
             current = queue.peek();
             if ( current == null ) break; // lmao...
             closure = computeEpsilonClosure( DFAToNFA.get( current ) );
             name = genNameFromStates( closure );
 
-            // System.out.println( current.name );
+            DFAToNFA.put( current, closure ); // :0
+
+            System.out.println( "Closure:\n" + closure.toString() );
+
+            System.out.println( "ASDASDASD " + current.name );
+
         } while ( queue.size() > 0 );
 
+        System.out.println( "---------------------**********************'" );
         // Set the ending states
-        // System.out.println( DFAToNFA );
-        // System.out.println( "Setting finish states for DFA" );
+        System.out.println( DFAToNFA );
+        System.out.println( "Setting finish states for DFA" );
         for ( DFA_state dfa : DFAToNFA.keySet() ) {
-            // System.out.println( "checking DFA state" + dfa.name );
+            System.out.println( "checking DFA state" + dfa.name );
             for ( NFA_state nfa : DFAToNFA.get( dfa ) ) {
                 if ( nfa.isFinal ) {
                     dfa.isFinal = true;
@@ -264,12 +270,27 @@ public class NFA_state {
                 }
             }
         }
-        // System.out.println( "END finish states for DFA" );
+        System.out.println( "END finish states for DFA" );
 
         return dfaBegin;
     }
 
-    
+    public static List<NFA_state> collectFinals( NFA_state start ) {
+        List<NFA_state> li = new ArrayList<>();
+        Set<String> visited = new HashSet<>();
+
+        _collectFinals( start, li, visited );
+
+        return li;
+    }
+
+    private static void _collectFinals( NFA_state state, List<NFA_state> li, Set<String> visited ) {
+        if ( visited.contains( state.name ) ) return;
+        visited.add( state.name );
+        if ( state.isFinal ) li.add( state );
+        for ( NFA_edge e : state.out )
+            _collectFinals( e.to, li, visited );
+    }
 
     private static String genNameFromStates( Set<NFA_state> states ) {
         if ( states.size() == 0 ) return "";
@@ -298,10 +319,14 @@ public class NFA_state {
             for ( NFA_edge edge : state.out() ) {
                 if ( !edge.isEpsilon() ) continue;
 
-                output.add( (NFA_state) edge.to() );   
+                output.add( edge.to() );   
                 input.add( edge.to() );
             }
         }
+        System.out.println( "-.-.-.-.-.-.-.-.-.-" );
+
+        System.out.println( output );
+        System.out.println( "-.-.-.-.-.-.-.-.-.-" );
 
         return output;
     }
@@ -320,25 +345,38 @@ public class NFA_state {
             _collectStates( e.to(), q );
     }
 
-    // public NFA_state copy() {
-    //     NFA_state q = new NFA_state( name, isFinal );
+    public NFA_state copy() {
+        
+        Map<NFA_state, NFA_state> visited = new HashMap<>();
+        NFA_state q = _copy( visited );
 
-    //     for ( NFA_edge e : out ) {
-    //         NFA_edge ne = new NFA_edge( e.accept );
-    //         ne.isEpsilon = e.isEpsilon;
-    //         ne.from = this;
+        return q;
+    }
+ 
+   // TODO: check if this works correctly
+    private NFA_state _copy( Map<NFA_state, NFA_state> visited ) {
+        if ( visited.containsKey( this ) ) return visited.get( this );
+        
+        NFA_state q = new NFA_state( name + "CP", isFinal );
+        visited.put( this, q );
+        
+        for ( NFA_edge e : out ) {
+            NFA_edge ne = new NFA_edge( e.accept );
+            ne.isEpsilon = e.isEpsilon;
+            ne.acceptAny = e.acceptAny;
+            ne.from = this;
             
-    //         NFA_state nto = e.to.copy();
+            NFA_state nto = e.to._copy( visited );
             
-    //         ne.to = nto;
+            ne.to = nto;
 
-    //         q.out.add( ne );
-    //         nto.in.add( ne );
-    //     }
+            q.out.add( ne );
+            nto.in.add( ne );
+        }
 
 
-    //     return q;
-    // }
+        return q;
+    }
 
     public static String getStringRepresentation( NFA_state nfa ) {
         String s = "";
@@ -355,23 +393,23 @@ public class NFA_state {
         return s;
     }
 
+    public String toString() {
+        return name();
+    }
+
     public String name() {
-        // TODO Auto-generated method stub
         return name;
     }
 
     public List<NFA_edge> in() {
-        // TODO Auto-generated method stub
         return in;
     }
 
     public List<NFA_edge> out() {
-        // TODO Auto-generated method stub
         return out;
     }
 
     public boolean isFinal() {
-        // TODO Auto-generated method stub
         return isFinal;
     }
     

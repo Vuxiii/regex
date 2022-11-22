@@ -30,20 +30,24 @@ public class RegexConstructorVisitor extends VisitorBase {
     //     System.out.println( token.toString() );
     // }
 
+    // TODO: Check if this fucks something up...
     private void addFinish( NFA_state begin, NFA_state end ) {
+        end.isFinal = true;
         if ( !finalStates.containsKey( begin.name ) ) 
             finalStates.put( begin.name, Utils.toSet( end ) );
         else 
             finalStates.get( begin.name ).add( end );
 
-        // System.out.println( "FINALSSSSSSSS");
-        // System.out.println( finalStates );
-        // System.out.println( "FINALSSSSSSSS");
     }
 
+    // TODO: Check if this fucks something up...
     private void clearFinish( NFA_state state ) {
-        if ( finalStates.containsKey( state.name ) ) 
+        if ( finalStates.containsKey( state.name ) )  {
+            for ( NFA_state finals : finalStates.get( state.name ) )
+                finals.isFinal = false;
+        
             finalStates.put( state.name, Utils.toSet() );
+        }
     }
 
     private Set<NFA_state> getFinish( NFA_state state ) {
@@ -87,6 +91,7 @@ public class RegexConstructorVisitor extends VisitorBase {
         } else if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
             System.out.println( "tokenRep" );
             TokenRegRepetition _token = (TokenRegRepetition) token;
+
             NFA_state start = new NFA_state();
 
             NFA_state state = nfaStack.pop();
@@ -137,9 +142,9 @@ public class RegexConstructorVisitor extends VisitorBase {
             // TokenRoot _token = (TokenRoot) token;
             // Convert to dfa. or not.
             NFA_state tok = nfaStack.pop();
-            // System.out.println( "***************" );
-            // System.out.println( NFA_state.getStringRepresentation(tok) );
-            // System.out.println( "***************" );
+            System.out.println( "***************" );
+            System.out.println( NFA_state.getStringRepresentation(tok) );
+            System.out.println( "***************" );
             // result = NFA_state.toDFA( tok );
             result = tok;
             // System.out.println( "asd " + result.name );
@@ -223,7 +228,94 @@ public class RegexConstructorVisitor extends VisitorBase {
                 // NFA_state charState = nfaStack.pop(); 
 
             }
-        }
+        } else if ( token instanceof TokenRegRange ) {
+            System.out.println( "TokenRegRange" );
+            TokenRegRange _token = (TokenRegRange) token;
+            if ( _token.right == null ) {
+                if ( _token.kind == TokenRangeKind.INT ) {
+                    System.out.println( "*****************************************************************'" );
+                    System.out.println( "In tokenRangeInt" );
+                    
+                    int reps = ((TokenRegDigit)_token.left).value;
+                    System.out.println( "REPS: " + reps );
+                    
+                    NFA_state anchor = null;
+
+                    NFA_state stateToRepeat = nfaStack.pop();
+                    
+                    
+                    NFA_state start = new NFA_state( "RangeStart" );
+                    nfaStack.push( start );
+
+                    for ( int i = 0; i < reps; ++i ) {
+                        System.out.println( "Rep: " + i );
+                        
+                        NFA_state current = stateToRepeat.copy();
+                        
+
+
+                        start.addEdge( current );
+
+                        anchor = new NFA_state( "Anchor" );
+                        
+
+                        for ( NFA_state finish : NFA_state.collectFinals( current ) ) {
+                            System.out.println( "akjshdaiuhdasd" );
+                            finish.addEdge( anchor );
+                            finish.isFinal = false;
+                        }
+
+                        // clearFinish( current );
+                        
+                        // addFinish( newStart, anchor );
+                        System.out.println( NFA_state.getStringRepresentation( start ) );
+
+
+                        start = anchor;
+                     
+                    }
+                    addFinish( nfaStack.peek(), anchor );
+                    System.out.println( "-------------------------");
+                    System.out.println( NFA_state.getStringRepresentation( nfaStack.peek() ) );
+                    System.out.println( "-------------------------");
+                    System.out.println( "-------------------------");
+
+
+                    // Single value;
+                    // state = new NFA_state();
+                    // end = state.registerWord( ((TokenChar)token).value + "", true );
+
+                    
+                    // addFinish( start, end );
+
+                    // System.out.println( NFA_state.getStringRepresentation( start ));
+
+
+                } else if ( _token.kind == TokenRangeKind.CHAR ) {
+                    System.out.println( "FAILURE");
+                    System.exit( -1 );
+                    
+                } else {
+                    System.out.println( "FAILURE");
+                    System.exit( -1 );
+                }
+            } else {
+                if ( _token.kind == TokenRangeKind.INT ) {
+                    System.out.println( "FAILURE");
+                    System.exit( -1 );
+
+                } else if ( _token.kind == TokenRangeKind.CHAR ) {
+                    System.out.println( "FAILURE");
+                    System.exit( -1 );
+                    
+                } else {
+                    System.out.println( "FAILURE");
+                    System.exit( -1 );
+                }
+            }
+            
+
+        } 
     }
 
 }
