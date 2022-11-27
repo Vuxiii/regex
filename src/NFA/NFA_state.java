@@ -7,18 +7,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import src.DFA.DFA_state;
 import src.Utils.Utils;
 
-public class NFA_state {
+public class NFA_state<T> {
     public String name;
     
     public boolean isFinal = false;
 
-    List<NFA_edge> out;
-    List<NFA_edge> in;
+    List<NFA_edge<T>> out;
+    List<NFA_edge<T>> in;
     public static int c = 0;
+
+    public Function<String, T> constructor;
 
     public NFA_state() {
         this( "", false );
@@ -42,7 +45,7 @@ public class NFA_state {
 
         boolean found = false;
 
-        for ( NFA_edge e : out ) {
+        for ( NFA_edge<T> e : out ) {
             if ( e.accept == c )
                 return true;
             if ( e.isEpsilon )
@@ -53,45 +56,45 @@ public class NFA_state {
     }
 
     public boolean hasEpsilonEdge() {
-        for ( NFA_edge e : out ) 
+        for ( NFA_edge<T> e : out ) 
             if ( e.isEpsilon )
                 return true;
         return false;
     }
 
-    public NFA_state registerWord( String s ) {
-        NFA_state start = new NFA_state();
+    public NFA_state<T> registerWord( String s ) {
+        NFA_state<T> start = new NFA_state<>();
 
         addEdge( start );
         return start._registerWord( s );
     }
 
-    private NFA_state _registerWord( String s ) {
+    private NFA_state<T> _registerWord( String s ) {
         if ( s.length() == 0 ) return this;
 
         char c = s.charAt( 0 );
 
-        NFA_state newState = new NFA_state( "", s.length() == 1 ); 
+        NFA_state<T> newState = new NFA_state<>( "", s.length() == 1 ); 
         addEdge( c, newState );
 
         return newState._registerWord( s.substring( 1 ) );
     }
 
 
-    public NFA_state registerWord( String s, boolean shouldAccept ) { // Add should accept state.
-        NFA_state start = new NFA_state();
+    public NFA_state<T> registerWord( String s, boolean shouldAccept ) { // Add should accept state.
+        NFA_state<T> start = new NFA_state<>();
 
         addEdge( start );
         return start._registerWord( s, shouldAccept );
     }
 
     
-    private NFA_state _registerWord( String s, boolean shouldAccept ) {
+    private NFA_state<T> _registerWord( String s, boolean shouldAccept ) {
         if ( s.length() == 0 ) return this;
 
         char c = s.charAt( 0 );
 
-        NFA_state newState = new NFA_state( "", s.length() == 1 ? shouldAccept : false ); 
+        NFA_state<T> newState = new NFA_state<>( "", s.length() == 1 ? shouldAccept : false ); 
         addEdge( c, newState );
 
         return newState._registerWord( s.substring( 1 ), shouldAccept );
@@ -102,9 +105,9 @@ public class NFA_state {
      * @param c
      * @param to
      */
-    public void addEdge( char c, NFA_state to ) {
+    public void addEdge( char c, NFA_state<T> to ) {
         // Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
-        NFA_edge e = new NFA_edge( c );
+        NFA_edge<T> e = new NFA_edge<>( c );
         e.from = this;
         e.to = to;
 
@@ -117,9 +120,9 @@ public class NFA_state {
      * Adds 
      * @param to
      */
-    public void addEdge( boolean isWild, NFA_state to ) {
+    public void addEdge( boolean isWild, NFA_state<T> to ) {
         // Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
-        NFA_edge e = new NFA_edge( isWild );
+        NFA_edge<T> e = new NFA_edge<>( isWild );
         e.from = this;
         e.to = to;
 
@@ -132,10 +135,10 @@ public class NFA_state {
      * Adds an epsilon edge to the given state.
      * @param to The state to go to.
      */
-    public void addEdge( NFA_state to ) {
+    public void addEdge( NFA_state<T> to ) {
         // Utils.log( "Adding edge " + name + " -epsilon1> " + to.name() );
 
-        NFA_edge e = new NFA_edge();
+        NFA_edge<T> e = new NFA_edge<>();
         e.from = this;
         e.to = to;
 
@@ -150,10 +153,10 @@ public class NFA_state {
      * @param c The char to accept.
      * @return The list of states reached by traversing the edges with c.
      */
-    public List<NFA_state> consume( char c ) {
-        List<NFA_state> list = new ArrayList<>();
+    public List<NFA_state<T>> consume( char c ) {
+        List<NFA_state<T>> list = new ArrayList<>();
         
-        for ( NFA_edge e : out ) {
+        for ( NFA_edge<T> e : out ) {
             if ( e.accept == c ) 
                 list.add( e.to );
         }
@@ -165,11 +168,11 @@ public class NFA_state {
      * Consumes all epsilon edges from this state.
      * @return
      */
-    public List<NFA_state> consume() {
+    public List<NFA_state<T>> consume() {
 
-        List<NFA_state> list = new ArrayList<>();
+        List<NFA_state<T>> list = new ArrayList<>();
         
-        for ( NFA_edge e : out ) {
+        for ( NFA_edge<T> e : out ) {
             if ( e.isEpsilon ) 
                 list.add( e.to );
         }
@@ -178,34 +181,34 @@ public class NFA_state {
     }
 
 
-    public static DFA_state toDFA( NFA_state begin ) {
+    public static <T> DFA_state<T> toDFA( NFA_state<T> begin ) {
 
-        Map<Set<NFA_state>, DFA_state> cachedStates = new HashMap<>();
-        Map<DFA_state, Set<NFA_state>> DFAToNFA = new HashMap<>();
+        Map<Set<NFA_state<T>>, DFA_state<T>> cachedStates = new HashMap<>();
+        Map<DFA_state<T>, Set<NFA_state<T>>> DFAToNFA = new HashMap<>();
 
-        LinkedList<DFA_state> queue = new LinkedList<>();
-        Set<NFA_state> closure = computeEpsilonClosure( Set.of( begin ) );
+        LinkedList<DFA_state<T>> queue = new LinkedList<>();
+        Set<NFA_state<T>> closure = computeEpsilonClosure( Set.of( begin ) );
         String name = genNameFromStates( closure );
-        DFA_state dfaBegin = new DFA_state( name );
+        DFA_state<T> dfaBegin = new DFA_state<>( name );
 
         DFAToNFA.put( dfaBegin, closure );
 
         // DFA_state current = dfaBegin;
         queue.add( dfaBegin );
         do {
-            DFA_state current = queue.pop();
+            DFA_state<T> current = queue.pop();
             // System.out.println( "Visiting DFA " + current.name );
-            Map<NFA_edge, Set<NFA_state>> reachable = new HashMap<>();
+            Map<NFA_edge<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
-            for ( NFA_state state : closure ) {
+            for ( NFA_state<T> state : closure ) {
                 // System.out.println( "At NFA: " + state.name );
-                for ( NFA_edge edge : state.out ) {
+                for ( NFA_edge<T> edge : state.out ) {
                     if ( edge.isEpsilon ) continue;
                     
                     // System.out.println( "\tChecking edge: " + edge );
                     if ( !reachable.containsKey( edge ) ) {
-                        Set<NFA_state> s = new HashSet<>();
+                        Set<NFA_state<T>> s = new HashSet<>();
                         s.add( edge.to );
                         reachable.put( edge, s );
                     } else {
@@ -218,16 +221,16 @@ public class NFA_state {
             }
 
             // Create all these states.
-            for ( NFA_edge c : reachable.keySet() ) {
+            for ( NFA_edge<T> c : reachable.keySet() ) {
                 // System.out.println( "At charachter: " + c);
-                Set<NFA_state> NFAStates = reachable.get( c );
-                DFA_state newState;
+                Set<NFA_state<T>> NFAStates = reachable.get( c );
+                DFA_state<T> newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
                     // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
                     newState = cachedStates.get( NFAStates );
                 }  else {
-                    newState = new DFA_state( genNameFromStates( NFAStates ) );
+                    newState = new DFA_state<>( genNameFromStates( NFAStates ) );
                     cachedStates.put( NFAStates, newState );
                     DFAToNFA.put( newState, NFAStates );
                     // System.out.println( "Creating new State: " + newState.name );
@@ -261,11 +264,13 @@ public class NFA_state {
         // Set the ending states
         // System.out.println( DFAToNFA );
         // System.out.println( "Setting finish states for DFA" );
-        for ( DFA_state dfa : DFAToNFA.keySet() ) {
+        for ( DFA_state<T> dfa : DFAToNFA.keySet() ) {
             // System.out.println( "checking DFA state" + dfa.name );
-            for ( NFA_state nfa : DFAToNFA.get( dfa ) ) {
+            for ( NFA_state<T> nfa : DFAToNFA.get( dfa ) ) {
                 if ( nfa.isFinal ) {
                     dfa.isFinal = true;
+                    dfa.constructor = nfa.constructor;
+                    // System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
                     break;
                 }
             }
@@ -275,8 +280,8 @@ public class NFA_state {
         return dfaBegin;
     }
 
-    public static List<NFA_state> collectFinals( NFA_state start ) {
-        List<NFA_state> li = new ArrayList<>();
+    public static<T> List<NFA_state<T>> collectFinals( NFA_state<T> start ) {
+        List<NFA_state<T>> li = new ArrayList<>();
         Set<String> visited = new HashSet<>();
 
         _collectFinals( start, li, visited );
@@ -284,39 +289,39 @@ public class NFA_state {
         return li;
     }
 
-    private static void _collectFinals( NFA_state state, List<NFA_state> li, Set<String> visited ) {
+    private static<T> void _collectFinals( NFA_state<T> state, List<NFA_state<T>> li, Set<String> visited ) {
         if ( visited.contains( state.name ) ) return;
         visited.add( state.name );
         if ( state.isFinal ) li.add( state );
-        for ( NFA_edge e : state.out )
+        for ( NFA_edge<T> e : state.out )
             _collectFinals( e.to, li, visited );
     }
 
-    private static String genNameFromStates( Set<NFA_state> states ) {
+    private static<T> String genNameFromStates( Set<NFA_state<T>> states ) {
         if ( states.size() == 0 ) return "";
         // System.out.println("GetNameFromStates");
         // states.forEach( state -> System.out.println( "\tNFA: " + state.name ) );
         String name = "";
-        for ( NFA_state state : states ) name += state.name() + ",";
+        for ( NFA_state<T> state : states ) name += state.name() + ",";
         name = name.substring(0, name.length() - 1);
         return name;
     }
 
-    private static Set<NFA_state> computeEpsilonClosure( Set<NFA_state> nfas  ) {
-        LinkedList<NFA_state> input = new LinkedList<>();
-        Set<NFA_state> output = new HashSet<>();
+    private static<T> Set<NFA_state<T>> computeEpsilonClosure( Set<NFA_state<T>> nfas  ) {
+        LinkedList<NFA_state<T>> input = new LinkedList<>();
+        Set<NFA_state<T>> output = new HashSet<>();
         Set<String> visited = new HashSet<>();
         input.addAll( nfas );
         output.addAll( nfas );
 
         while ( input.size() > 0 ) {
-            NFA_state state = input.pop();
+            NFA_state<T> state = input.pop();
             
             if ( visited.contains( state.name() ) ) continue;
             
             visited.add( state.name() );
             
-            for ( NFA_edge edge : state.out() ) {
+            for ( NFA_edge<T> edge : state.out() ) {
                 if ( !edge.isEpsilon() ) continue;
 
                 output.add( edge.to() );   
@@ -331,42 +336,42 @@ public class NFA_state {
         return output;
     }
 
-    public static List<NFA_state> collectStates( NFA_state nfa ) {
-        List<NFA_state> q = new LinkedList<>();
+    public static<T> List<NFA_state<T>> collectStates( NFA_state<T> nfa ) {
+        List<NFA_state<T>> q = new LinkedList<>();
         _collectStates( nfa, q );
 
         return q;
     }
 
-    private static void _collectStates( NFA_state nfa, List<NFA_state> q ) {
+    private static<T> void _collectStates( NFA_state<T> nfa, List<NFA_state<T>> q ) {
         if ( q.contains( nfa ) ) return;
         q.add( nfa );
-        for ( NFA_edge e : nfa.out() )
+        for ( NFA_edge<T> e : nfa.out() )
             _collectStates( e.to(), q );
     }
 
-    public NFA_state copy() {
+    public NFA_state<T> copy() {
         
-        Map<NFA_state, NFA_state> visited = new HashMap<>();
-        NFA_state q = _copy( visited );
+        Map<NFA_state<T>, NFA_state<T>> visited = new HashMap<>();
+        NFA_state<T> q = _copy( visited );
 
         return q;
     }
  
    // TODO: check if this works correctly
-    private NFA_state _copy( Map<NFA_state, NFA_state> visited ) {
+    private NFA_state<T> _copy( Map<NFA_state<T>, NFA_state<T>> visited ) {
         if ( visited.containsKey( this ) ) return visited.get( this );
         
-        NFA_state q = new NFA_state( name + "CP", isFinal );
+        NFA_state<T> q = new NFA_state<>( name + "CP", isFinal );
         visited.put( this, q );
         
-        for ( NFA_edge e : out ) {
-            NFA_edge ne = new NFA_edge( e.accept );
+        for ( NFA_edge<T> e : out ) {
+            NFA_edge<T> ne = new NFA_edge<>( e.accept );
             ne.isEpsilon = e.isEpsilon;
             ne.acceptAny = e.acceptAny;
             ne.from = this;
             
-            NFA_state nto = e.to._copy( visited );
+            NFA_state<T> nto = e.to._copy( visited );
             
             ne.to = nto;
 
@@ -378,14 +383,14 @@ public class NFA_state {
         return q;
     }
 
-    public static String getStringRepresentation( NFA_state nfa ) {
+    public static<T> String getStringRepresentation( NFA_state<T> nfa ) {
         String s = "";
-        List<NFA_state> states = NFA_state.collectStates( nfa );
-        for ( NFA_state state : states ) {
+        List<NFA_state<T>> states = NFA_state.collectStates( nfa );
+        for ( NFA_state<T> state : states ) {
             s += ( "State " + state.name + "\n" );
             s += ( "\tisFinal = " + state.isFinal + "\n" );
             s += ( "\tout edges:" + "\n" );
-            for ( NFA_edge e : state.out ) {
+            for ( NFA_edge<T> e : state.out ) {
                 s += ( "\t\t[" + (e.isEpsilon ? "epsilon" : e.accept) + " -> State " + e.to.name + "]" + "\n" );
             }
         }
@@ -401,11 +406,11 @@ public class NFA_state {
         return name;
     }
 
-    public List<NFA_edge> in() {
+    public List<NFA_edge<T>> in() {
         return in;
     }
 
-    public List<NFA_edge> out() {
+    public List<NFA_edge<T>> out() {
         return out;
     }
 

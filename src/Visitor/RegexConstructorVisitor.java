@@ -9,13 +9,13 @@ import src.NFA.NFA_state;
 import src.Regex.Token.*;
 import src.Utils.Utils;
 
-public class RegexConstructorVisitor extends VisitorBase {
+public class RegexConstructorVisitor<T> extends VisitorBase {
     
 
-    public LinkedList<NFA_state> nfaStack;
-    public Map<String, Set<NFA_state>> finalStates;
+    public LinkedList<NFA_state<T>> nfaStack;
+    public Map<String, Set<NFA_state<T>>> finalStates;
 
-    public NFA_state result;
+    public NFA_state<T> result;
 
 
 
@@ -31,7 +31,7 @@ public class RegexConstructorVisitor extends VisitorBase {
     // }
 
     // TODO: Check if this fucks something up...
-    private void addFinish( NFA_state begin, NFA_state end ) {
+    private void addFinish( NFA_state<T> begin, NFA_state<T> end ) {
         end.isFinal = true;
         if ( !finalStates.containsKey( begin.name ) ) 
             finalStates.put( begin.name, Utils.toSet( end ) );
@@ -41,35 +41,35 @@ public class RegexConstructorVisitor extends VisitorBase {
     }
 
     // TODO: Check if this fucks something up...
-    private void clearFinish( NFA_state state ) {
+    private void clearFinish( NFA_state<T> state ) {
         if ( finalStates.containsKey( state.name ) )  {
-            for ( NFA_state finals : finalStates.get( state.name ) )
+            for ( NFA_state<T> finals : finalStates.get( state.name ) )
                 finals.isFinal = false;
         
             finalStates.put( state.name, Utils.toSet() );
         }
     }
 
-    private Set<NFA_state> getFinish( NFA_state state ) {
+    private Set<NFA_state<T>> getFinish( NFA_state<T> state ) {
         return finalStates.getOrDefault( state.name, Utils.toSet() );
     }
 
     public void visit_leaf( Token token ) {
 
         if ( token instanceof TokenChar ) {
-            NFA_state state = null;
-            NFA_state end = null;
+            NFA_state<T> state = null;
+            NFA_state<T> end = null;
 
             if ( ((TokenChar)token).kind == TokenCharKind.CHAR ) {
                 // System.out.println( "tokenChar" );
-                state = new NFA_state();
+                state = new NFA_state<>();
                 end = state.registerWord( ((TokenChar)token).value + "", true );
 
                 // addFinish( charState, end );
             } else if  ( ((TokenChar)token).kind == TokenCharKind.WILD ) {
                 // System.out.println( "\t\tTokenRegWild" );
-                state = new NFA_state();
-                end = new NFA_state();
+                state = new NFA_state<>();
+                end = new NFA_state<>();
                 end.isFinal = true;
                 state.addEdge( true, end );
     
@@ -88,13 +88,23 @@ public class RegexConstructorVisitor extends VisitorBase {
             // } else {
             
             // }
-        } else if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
-            // System.out.println( "tokenRep" );
+        } else if ( token instanceof TokenRegUdtryk ) {
+            
+            // System.out.println( "tokenUdtryk" );
+
+
+        } 
+        // System.out.println( nfaStack.size() );
+    }
+
+    public void postVisit_star( Token token ) {
+        if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
+            // System.out.println( "tokenRep************************'" );
             TokenRegRepetition _token = (TokenRegRepetition) token;
 
-            NFA_state start = new NFA_state();
+            NFA_state<T> start = new NFA_state<>();
 
-            NFA_state state = nfaStack.pop();
+            NFA_state<T> state = nfaStack.pop();
 
             // System.out.println( "-------------------" );
             // System.out.println( "-------------------" );
@@ -110,7 +120,7 @@ public class RegexConstructorVisitor extends VisitorBase {
             
             // System.out.println( "Checking state" + state.name + " finishes" );
             // System.out.println( "All the finish for this state are " + getFinish( state ) );
-            for ( NFA_state finish : getFinish( state ) ) {
+            for ( NFA_state<T> finish : getFinish( state ) ) {
                 // System.out.println( "Final state are: " + finish.name );
                 finish.isFinal = true;
                 finish.addEdge( start );
@@ -126,13 +136,7 @@ public class RegexConstructorVisitor extends VisitorBase {
             // System.out.println( nfaStack );
 
 
-        } else if ( token instanceof TokenRegUdtryk ) {
-            
-            // System.out.println( "tokenUdtryk" );
-
-
-        } 
-        // System.out.println( nfaStack.size() );
+        }
     }
 
     public void postVisit_concat( Token token ) {
@@ -146,20 +150,20 @@ public class RegexConstructorVisitor extends VisitorBase {
                 // System.out.println( _token );
             } else {
                 // System.out.println( "We have a left and a right!!!!" );
-                NFA_state right = nfaStack.pop();
-                NFA_state left = nfaStack.pop();
+                NFA_state<T> right = nfaStack.pop();
+                NFA_state<T> left = nfaStack.pop();
 
-                NFA_state concat = new NFA_state();
+                NFA_state<T> concat = new NFA_state<>();
 
                 concat.addEdge(left);
-                for ( NFA_state leftFinish : getFinish( left ) ) {
+                for ( NFA_state<T> leftFinish : getFinish( left ) ) {
                     // System.out.println( "finish.....");
                     leftFinish.addEdge(right);
                     leftFinish.isFinal = false;
                 }
 
                 clearFinish( left );
-                for ( NFA_state newFinish : getFinish( right ) ) {
+                for ( NFA_state<T> newFinish : getFinish( right ) ) {
                     addFinish( concat, newFinish );
                 }
 
@@ -180,19 +184,19 @@ public class RegexConstructorVisitor extends VisitorBase {
                 // System.out.println( "In do nothing...");
             } else {
                 // System.out.println( "Not in do nothing...");
-                NFA_state right = nfaStack.pop();
-                NFA_state left = nfaStack.pop();
+                NFA_state<T> right = nfaStack.pop();
+                NFA_state<T> left = nfaStack.pop();
 
-                NFA_state union = new NFA_state();
+                NFA_state<T> union = new NFA_state<>();
                 union.addEdge( left );
                 union.addEdge( right );
                 nfaStack.push( union );
 
-                for ( NFA_state newFinish : getFinish( left ) ) {
+                for ( NFA_state<T> newFinish : getFinish( left ) ) {
                     addFinish( union, newFinish );
                 }
 
-                for ( NFA_state newFinish : getFinish( right ) ) {
+                for ( NFA_state<T> newFinish : getFinish( right ) ) {
                     addFinish( union, newFinish );
                 }
 
@@ -219,7 +223,7 @@ public class RegexConstructorVisitor extends VisitorBase {
             // sym -> tChar
             } else {
                 // Also do nothing... right??
-                // NFA_state charState = nfaStack.pop(); 
+                // NFA_state<T> charState = nfaStack.pop(); 
 
             }
         }
@@ -234,23 +238,23 @@ public class RegexConstructorVisitor extends VisitorBase {
                     
                     int reps = ((TokenRegDigit)_token.left).value;
                     
-                    NFA_state anchor = null;
+                    NFA_state<T> anchor = null;
 
-                    NFA_state stateToRepeat = nfaStack.pop();
+                    NFA_state<T> stateToRepeat = nfaStack.pop();
                     
                     
-                    NFA_state start = new NFA_state( "RangeStart" );
+                    NFA_state<T> start = new NFA_state<>( "RangeStart" );
                     nfaStack.push( start );
 
                     for ( int i = 0; i < reps; ++i ) {
-                        NFA_state current = stateToRepeat.copy();
+                        NFA_state<T> current = stateToRepeat.copy();
                     
                         start.addEdge( current );
 
-                        anchor = new NFA_state( "Anchor" );
+                        anchor = new NFA_state<>( "Anchor" );
                         
 
-                        for ( NFA_state finish : NFA_state.collectFinals( current ) ) {
+                        for ( NFA_state<T> finish : NFA_state.collectFinals( current ) ) {
                             finish.addEdge( anchor );
                             finish.isFinal = false;
                         }
@@ -292,7 +296,7 @@ public class RegexConstructorVisitor extends VisitorBase {
             // System.out.println( "tokenRoot" );
             // TokenRoot _token = (TokenRoot) token;
             // Convert to dfa. or not.
-            NFA_state tok = nfaStack.pop();
+            NFA_state<T> tok = nfaStack.pop();
             // System.out.println( "***************" );
             // System.out.println( NFA_state.getStringRepresentation(tok) );
             // System.out.println( "***************" );

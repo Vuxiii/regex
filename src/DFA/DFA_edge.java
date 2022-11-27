@@ -3,11 +3,11 @@ package src.DFA;
 /**
  * This class represents edges between DFA_states
  */
-public class DFA_edge {
+public class DFA_edge<T> {
     char accept;
     boolean acceptAny;
-    DFA_state to;
-    DFA_state from;
+    DFA_state<T> to;
+    DFA_state<T> from;
 
     public DFA_edge( char c ) {
         accept = c;
@@ -19,11 +19,11 @@ public class DFA_edge {
         acceptAny = wild;
     }
 
-    public DFA_state to() {
+    public DFA_state<T> to() {
         return to;
     }
 
-    public DFA_state from() {
+    public DFA_state<T> from() {
         return from;
     }
 

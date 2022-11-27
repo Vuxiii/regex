@@ -2,6 +2,7 @@ package src.Regex;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import src.LR.Grammar;
 import src.LR.LRParser;
@@ -56,7 +57,7 @@ public class RegexParser {
 
     // private static DFA_state regexDFA;
 
-    public static NFA_state compileRegex( String regex ) { 
+    public static<T> NFA_state<T> compileRegex( String regex, Function<String, T> constructor ) { 
         if ( firstSetup )
             setup();
         firstSetup = false;
@@ -71,13 +72,14 @@ public class RegexParser {
 
         // Parse AST.
 
-        RegexConstructorVisitor reg = new RegexConstructorVisitor();
+        RegexConstructorVisitor<T> reg = new RegexConstructorVisitor<>();
         AST.accept( reg );
 
         // System.out.println( DFA_state.getStringRepresentation( reg.result ) );
 
-        NFA_state nfa = reg.result;
-
+        NFA_state<T> nfa = reg.result;
+        NFA_state.collectFinals(nfa).forEach( n -> n.constructor = constructor );;
+        // nfa.constructor = constructor;
         // Return the result.
         return nfa;
         // return NFA_state.toDFA(nfa);

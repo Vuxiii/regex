@@ -7,12 +7,12 @@ import java.util.List;
  * This class represents edges between NFA_states
  * It can either accept a char or it is a epsilon edge.
  */
-public class NFA_edge {
+public class NFA_edge<T> {
     char accept;
     boolean isEpsilon = false;
     boolean acceptAny;
-    NFA_state to;
-    NFA_state from;
+    NFA_state<T> to;
+    NFA_state<T> from;
 
     public NFA_edge( char c ) {
         accept = c;
@@ -39,11 +39,11 @@ public class NFA_edge {
         return isEpsilon;
     }
 
-    public NFA_state to() {
+    public NFA_state<T> to() {
         return to;
     }
 
-    public NFA_state from() {
+    public NFA_state<T> from() {
         return from;
     }
 
