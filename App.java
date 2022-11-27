@@ -1,10 +1,10 @@
 
 import java.util.List;
 
-import src.Regex.Regex;
-import src.Regex.Token.Token;
-import src.Regex.Token.TokenChar;
-import src.Regex.Token.TokenIdentifier;
+import src.Regex.Regex.Regex;
+import src.Regex.Regex.Token.Token;
+import src.Regex.Regex.Token.TokenChar;
+import src.Regex.Regex.Token.TokenIdentifier;
 
 public class App {
     public static void main( String[] args ) {
