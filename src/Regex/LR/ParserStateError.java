@@ -1,9 +1,0 @@
-package src.Regex.LR;
-
-public class ParserStateError extends ParserState {
-    
-    public ParserStateError(String errorMessage) {
-        super( errorMessage );
-    }
-    
-}
