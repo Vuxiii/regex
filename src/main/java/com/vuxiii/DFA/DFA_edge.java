@@ -1,4 +1,5 @@
 package com.vuxiii.DFA;
+
 /**
  * This class represents edges between DFA_states
  */
