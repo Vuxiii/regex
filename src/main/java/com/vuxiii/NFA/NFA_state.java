@@ -216,6 +216,7 @@ public class NFA_state<T> {
             
             // Map<NFA_edge<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
             Map<Character, Set<NFA_state<T>>> reachable = new HashMap<>();
+            Set<NFA_state<T>> anyReachable = new HashSet<>();
             // Map<Wrapper<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
@@ -227,6 +228,7 @@ public class NFA_state<T> {
                     System.out.println( "\tChecking edge: " + edge );
                     if ( edge.acceptAny ) {
                         // Add to all nodes in the alfabet
+                        anyReachable.add( edge.to );
                     } else if ( !reachable.containsKey( edge.accept ) ) {
                         Set<NFA_state<T>> s = new HashSet<>();
                         s.add( edge.to );
@@ -262,17 +264,28 @@ public class NFA_state<T> {
                 System.out.println( "New State: " + newState.name );
 
                 // Add the edge to it.
-                // if ( c.acceptAny )
-                //     current.addEdge( (boolean) c.acceptAny, newState );
-                // else
-                //     current.addEdge( c.accept, newState );
-
-
-                // I need to somehow mark it as an accept any edge.
-                current.addEdge( c, newState );
-
-                
+                current.addEdge( c, newState ); 
             }
+
+            if ( anyReachable.size() > 0 ) {
+                DFA_state<T> newState;
+                if ( cachedStates.containsKey( anyReachable ) ) {
+                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                    newState = cachedStates.get( anyReachable );
+                }  else {
+                    newState = new DFA_state<>( genNameFromStates( anyReachable ) );
+                    cachedStates.put( anyReachable, newState );
+                    DFAToNFA.put( newState, anyReachable );
+                    // System.out.println( "Creating new State: " + newState.name );
+                    queue.add( newState ); // Might need to move this outside of this clause.
+                }
+                System.out.println( "New State: " + newState.name );
+                // Add the edge to it.
+                current.addEdge( true, newState ); 
+            }
+            
+
+
             // System.out.println( "Queue:" );
             // queue.forEach( nfa -> System.out.println( "\t" + nfa.name ) );
             current = queue.peek();
