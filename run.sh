@@ -1,0 +1,1 @@
+cd /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex ; /usr/bin/env /home/william/.vscode-oss/extensions/redhat.java-1.13.0-linux-x64/jre/17.0.5-linux-x86_64/bin/java -XX:+ShowCodeDetailsInExceptionMessages -cp /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/target/classes com.vuxiii.App

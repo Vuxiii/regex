@@ -41,9 +41,9 @@ public class Regex<T> {
     public void addRegex( String regex, Function<String, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
         NFA_state<T> n = RegexParser.compileRegex( regex, constructor );
         nfa.addEdge( n ); // add edge to DFA!!!!
-        System.out.println( "-".repeat(10) );
-        System.out.println( NFA_state.getStringRepresentation(n) );
-        System.out.println( "-".repeat(10) );
+        // System.out.println( "-".repeat(10) );
+        // System.out.println( NFA_state.getStringRepresentation(n) );
+        // System.out.println( "-".repeat(10) );
     }
 
 
@@ -53,8 +53,8 @@ public class Regex<T> {
      */
     public List<T> match( String input ) {
         List<T> output = new LinkedList<>();
-        System.out.println( "\n".repeat(3) );
-        System.out.println( DFA_state.getStringRepresentation(dfa) );
+        // System.out.println( "\n".repeat(3) );
+        // System.out.println( DFA_state.getStringRepresentation(dfa) );
         Scanner in = new Scanner( input );
         DFA_state<T> current = dfa;
         boolean foundMatch = false;
@@ -97,12 +97,12 @@ public class Regex<T> {
     }
 
     public void compile() { // Convert the internal NFA to a DFA
-        System.out.println( "FINAL------------------------------------" );
-        System.out.println( NFA_state.getStringRepresentation(nfa) );
-        System.out.println( "FINAL------------------------------------" );
+        // System.out.println( "FINAL------------------------------------" );
+        // System.out.println( NFA_state.getStringRepresentation(nfa) );
+        // System.out.println( "FINAL------------------------------------" );
         dfa = NFA_state.toDFA( nfa );
-        System.out.println( "Result DFA--------------------------------------------------------");
-        System.out.println( DFA_state.getStringRepresentation(dfa) );
-        System.out.println( "Result DFA--------------------------------------------------------");
+        // System.out.println( "Result DFA--------------------------------------------------------");
+        // System.out.println( DFA_state.getStringRepresentation(dfa) );
+        // System.out.println( "Result DFA--------------------------------------------------------");
     }
 }

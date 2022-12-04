@@ -23,6 +23,7 @@
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRegConcat.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenLCurl.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRegRepetition.java
+/home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRegDash.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenEOP.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenArithmeticExpression.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/LR/ParseTable.java

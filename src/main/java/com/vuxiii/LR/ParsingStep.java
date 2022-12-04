@@ -170,6 +170,8 @@ public class ParsingStep {
             Utils.log( "We encountered a parse error" );
             Utils.log( action.toString() );
 
+            Utils.log( "Current step of failure" );
+            Utils.log( this.toString() );
             System.exit(-1);
         } else {
             Utils.log( "Wtf just happend....." );

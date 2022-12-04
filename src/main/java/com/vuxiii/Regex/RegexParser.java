@@ -42,7 +42,7 @@ public class RegexParser {
     private static Terminal tUnion;
     private static Terminal tEpsilon;
     private static Terminal tLCurl;
-    private static Terminal tDigits;
+    private static Terminal tNumber;
     private static Terminal tRCurl;
     private static Terminal tComma;
     private static Terminal tLBracket;
@@ -112,6 +112,7 @@ public class RegexParser {
         TokenRCurl rcurl = new TokenRCurl( tRCurl );
         TokenRegOperator union = new TokenRegOperator( tUnion );
         TokenRegStar star = new TokenRegStar( tStar );
+        TokenRegDash dash = new TokenRegDash( tDash );
         TokenRegOperator concat = new TokenRegOperator( tConcat );
         TokenEOP tOEP = new TokenEOP( tDollar );
         // System.out.println( regex );
@@ -144,6 +145,14 @@ public class RegexParser {
                     tokens.add( star );
                     addConcatToken = true;
                 } break;
+                case '-':{
+                    // if ( addConcatToken ) {
+                    //     tokens.add( concat );
+                    //     addConcatToken = false;
+                    // }
+                    tokens.add( dash );
+                    addConcatToken = false;
+                } break;
                 case '.': {
                     // System.out.println( "FOUND WILD" );
                     if ( addConcatToken ) {
@@ -169,16 +178,20 @@ public class RegexParser {
                             end++;
                             otherC = regex.charAt(end);
                         }
-                        tokens.add( new TokenRegDigit( Integer.parseInt( regex.substring( i, end ) ), tDigits ) );
+                        tokens.add( new TokenRegDigit( Integer.parseInt( regex.substring( i, end ) ), tNumber ) );
                         i = --end;
                     } else {
                         tokens.add( new TokenChar( c, tChar, TokenCharKind.CHAR ) );
+                        addConcatToken = true;
                     }
-                    addConcatToken = true;
+                    
                 } break;
             }
         }
         tokens.add( tOEP );
+
+        Utils.log( "Input tokens:" );
+        Utils.log( tokens );
 
         return tokens;
     
@@ -208,14 +221,14 @@ public class RegexParser {
         // Terminal tWild = new Terminal( "." );
         tEpsilon = new Terminal();
         tLCurl = new Terminal( "{" );
-        tDigits = new Terminal( ":digit:" ); // ?????????
+        tNumber = new Terminal( ":digit:" );
         tRCurl = new Terminal( "}" );
         tComma = new Terminal( "," );
         tLBracket = new Terminal( "[" );
         tRBracket = new Terminal( "]" );
         tDash = new Terminal( "-" );
-        tAlphs = new Terminal( "" ); //??????
-        tChar = new Terminal( ":char:" ); //??????
+        // tAlphs = new Terminal( ":alph:" ); //??????
+        tChar = new Terminal( ":char:" );
         // tWild = new Terminal( ":wild:" ); //??????
         tConcat = new Terminal( "->" ); // debug.
         tLParen = new Terminal( "(" ); // debug.
@@ -236,15 +249,15 @@ public class RegexParser {
         // LRRule rule8  = g.add_rule( nRepetition, List.of( nStar ) );
         // LRRule rule9  = g.add_rule( nRepetition, List.of( nOneMore ) );
         // LRRule rule10 = g.add_rule( nRepetition, List.of( nZeroOne ) );
-        // LRRule rule11 = g.add_rule( nRepetition, List.of( tLCurl, tDigits, tRCurl ) );
-        // LRRule rule12 = g.add_rule( nRepetition, List.of( tLCurl, tDigits, tComma, tDigits, tRCurl ) );
+        // LRRule rule11 = g.add_rule( nRepetition, List.of( tLCurl, tNumber, tRCurl ) );
+        // LRRule rule12 = g.add_rule( nRepetition, List.of( tLCurl, tNumber, tComma, tNumber, tRCurl ) );
         // LRRule rule13 = g.add_rule( nOneMore, List.of( nConcat, nStar ) );
         // LRRule rule14 = g.add_rule( nZeroOne, List.of( nConcat ) );
         // LRRule rule15 = g.add_rule( nZeroOne, List.of( tEpsilon ) );
         // LRRule rule16 = g.add_rule( nStar, List.of( tStar ) );
         
         // LRRule rule17 = g.add_rule( nRange, List.of( tLBracket, nUdtryk, tDash, nUdtryk, tRBracket ) );
-        // LRRule rule18 = g.add_rule( nRange, List.of( tDigits ) );
+        // LRRule rule18 = g.add_rule( nRange, List.of( tNumber ) );
         // LRRule rule19 = g.add_rule( nRange, List.of( tAlphs ) );
         
         // LRRule rule19 = g.add_rule( nUdtryk, List.of( nSymbol, nRepetition ) );
@@ -314,9 +327,16 @@ public class RegexParser {
             return new TokenRegRepetition( lcurl, token, rcurl, nRepetition );
         } );
 
-        g.addRuleWithReduceFunction( nRange, List.of( tDigits ), (tokens) -> {
+        g.addRuleWithReduceFunction( nRange, List.of( tNumber ), (tokens) -> {
             TokenRegDigit digits = (TokenRegDigit) tokens.get(0);
             return new TokenRegRange( digits, TokenRangeKind.INT, nRange );
+        } );
+
+        g.addRuleWithReduceFunction( nRange, List.of( tNumber, tDash, tNumber ), (tokens) -> {
+            TokenRegDigit digit1 = (TokenRegDigit) tokens.get(0);
+            // TokenRegDash dash = (TokenRegDash) tokens.get(1);
+            TokenRegDigit digit2 = (TokenRegDigit) tokens.get(2);
+            return new TokenRegRange( digit1, digit2, TokenRangeKind.INT, nRange );
         } );
 
         // TEST
@@ -336,6 +356,13 @@ public class RegexParser {
         g.addRuleWithReduceFunction( nSymbol, List.of( tChar ), (tokens) -> {
         
             TokenChar token = (TokenChar) tokens.get(0);
+            return new TokenRegSymbol( token, nSymbol );
+            
+        } );
+
+        g.addRuleWithReduceFunction( nSymbol, List.of( tNumber ), (tokens) -> {
+        
+            TokenRegDigit token = (TokenRegDigit) tokens.get(0);
             return new TokenRegSymbol( token, nSymbol );
             
         } );

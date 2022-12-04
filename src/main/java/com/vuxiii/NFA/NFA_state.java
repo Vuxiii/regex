@@ -196,7 +196,7 @@ public class NFA_state<T> {
 
     public static <T> DFA_state<T> toDFA( NFA_state<T> begin ) {
 
-        System.out.println( getStringRepresentation(begin));
+        // System.out.println( getStringRepresentation(begin));
 
         Map<Set<NFA_state<T>>, DFA_state<T>> cachedStates = new HashMap<>();
         Map<DFA_state<T>, Set<NFA_state<T>>> DFAToNFA = new HashMap<>();
@@ -212,7 +212,7 @@ public class NFA_state<T> {
         queue.add( dfaBegin );
         do {
             DFA_state<T> current = queue.pop();
-            System.out.println( "Visiting DFA " + current.name );
+            // System.out.println( "Visiting DFA " + current.name );
             
             // Map<NFA_edge<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
             Map<Character, Set<NFA_state<T>>> reachable = new HashMap<>();
@@ -221,11 +221,11 @@ public class NFA_state<T> {
 
             // Add all the edges reachable from this "combined" state
             for ( NFA_state<T> state : closure ) {
-                System.out.println( "At NFA: " + state.name );
+                // System.out.println( "At NFA: " + state.name );
                 for ( NFA_edge<T> edge : state.out ) {
                     if ( edge.isEpsilon ) continue;
                     
-                    System.out.println( "\tChecking edge: " + edge );
+                    // System.out.println( "\tChecking edge: " + edge );
                     if ( edge.acceptAny ) {
                         // Add to all nodes in the alfabet
                         anyReachable.add( edge.to );
@@ -237,18 +237,18 @@ public class NFA_state<T> {
                         reachable.get( edge.accept ).add( edge.to );
                     }
                 }
-                System.out.print( "\t\tCan go to -> " );
-                reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
-                System.out.println();
+                // System.out.print( "\t\tCan go to -> " );
+                // reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
+                // System.out.println();
             }
 
-            System.out.println( reachable );
+            // System.out.println( reachable );
 
             // Create all these states.
             for ( Character c : reachable.keySet() ) {
-                System.out.println( "At charachter: " + c);
+                // System.out.println( "At charachter: " + c);
                 Set<NFA_state<T>> NFAStates = reachable.get( c );
-                System.out.println( NFAStates );
+                // System.out.println( NFAStates );
                 DFA_state<T> newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
@@ -261,7 +261,7 @@ public class NFA_state<T> {
                     // System.out.println( "Creating new State: " + newState.name );
                     queue.add( newState ); // Might need to move this outside of this clause.
                 }
-                System.out.println( "New State: " + newState.name );
+                // System.out.println( "New State: " + newState.name );
 
                 // Add the edge to it.
                 current.addEdge( c, newState ); 
@@ -279,7 +279,7 @@ public class NFA_state<T> {
                     // System.out.println( "Creating new State: " + newState.name );
                     queue.add( newState ); // Might need to move this outside of this clause.
                 }
-                System.out.println( "New State: " + newState.name );
+                // System.out.println( "New State: " + newState.name );
                 // Add the edge to it.
                 current.addEdge( true, newState ); 
             }

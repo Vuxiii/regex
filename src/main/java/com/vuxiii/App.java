@@ -17,9 +17,9 @@ public class App {
 
         // regex.match( "Hej me ig :)daad" );
      
-        regex = new Regex<>( "indent", (id) -> new TokenIdentifier( id ) );
-        regex.addRegex( "int", (id) -> new TokenIdentifier( id ) );
-        regex.addRegex( ".*", (id) -> new TokenIdentifier( id ) );
+        regex = new Regex<>( "(a){3-5}be", (id) -> new TokenIdentifier( id ) );
+        // regex.addRegex( "int", (id) -> new TokenIdentifier( id ) );
+        // regex.addRegex( ".*", (id) -> new TokenIdentifier( id ) );
         // regex.addRegex( "(hej){3}", (id) -> new TokenIdentifier( id ) );
         // regex = new Regex( "H.{2}y" );
         // regex = new Regex( "." );
