@@ -180,8 +180,23 @@ public class NFA_state<T> {
         return list;
     }
 
+    // private static record Wrapper<T>( NFA_edge<T> edge, boolean isAny ) {
+
+    //     public boolean equals( Object other ) {
+    //         if ( other == null ) return false;
+    //         if ( !(other instanceof NFA_edge ) ) return false;
+    //         NFA_edge<?> o = (NFA_edge<?>) other;
+    //         if ( edge.isEpsilon != o.isEpsilon ) return false;
+    //         if ( edge.acceptAny || o.acceptAny ) return true; // :0
+    //         if ( edge.accept != o.accept ) return false;
+            
+    //         return true;
+    //     }
+    // }
 
     public static <T> DFA_state<T> toDFA( NFA_state<T> begin ) {
+
+        System.out.println( getStringRepresentation(begin));
 
         Map<Set<NFA_state<T>>, DFA_state<T>> cachedStates = new HashMap<>();
         Map<DFA_state<T>, Set<NFA_state<T>>> DFAToNFA = new HashMap<>();
@@ -197,33 +212,41 @@ public class NFA_state<T> {
         queue.add( dfaBegin );
         do {
             DFA_state<T> current = queue.pop();
-            // System.out.println( "Visiting DFA " + current.name );
-            Map<NFA_edge<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
+            System.out.println( "Visiting DFA " + current.name );
+            
+            // Map<NFA_edge<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
+            Map<Character, Set<NFA_state<T>>> reachable = new HashMap<>();
+            // Map<Wrapper<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
             for ( NFA_state<T> state : closure ) {
-                // System.out.println( "At NFA: " + state.name );
+                System.out.println( "At NFA: " + state.name );
                 for ( NFA_edge<T> edge : state.out ) {
                     if ( edge.isEpsilon ) continue;
                     
-                    // System.out.println( "\tChecking edge: " + edge );
-                    if ( !reachable.containsKey( edge ) ) {
+                    System.out.println( "\tChecking edge: " + edge );
+                    if ( edge.acceptAny ) {
+                        // Add to all nodes in the alfabet
+                    } else if ( !reachable.containsKey( edge.accept ) ) {
                         Set<NFA_state<T>> s = new HashSet<>();
                         s.add( edge.to );
-                        reachable.put( edge, s );
+                        reachable.put( edge.accept, s );
                     } else {
-                        reachable.get( edge ).add( edge.to );
+                        reachable.get( edge.accept ).add( edge.to );
                     }
                 }
-                // System.out.print( "\t\tCan go to -> " );
-                // reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
-                // System.out.println();
+                System.out.print( "\t\tCan go to -> " );
+                reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
+                System.out.println();
             }
 
+            System.out.println( reachable );
+
             // Create all these states.
-            for ( NFA_edge<T> c : reachable.keySet() ) {
-                // System.out.println( "At charachter: " + c);
+            for ( Character c : reachable.keySet() ) {
+                System.out.println( "At charachter: " + c);
                 Set<NFA_state<T>> NFAStates = reachable.get( c );
+                System.out.println( NFAStates );
                 DFA_state<T> newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
@@ -236,12 +259,17 @@ public class NFA_state<T> {
                     // System.out.println( "Creating new State: " + newState.name );
                     queue.add( newState ); // Might need to move this outside of this clause.
                 }
+                System.out.println( "New State: " + newState.name );
 
                 // Add the edge to it.
-                if ( c.acceptAny )
-                    current.addEdge( (boolean) c.acceptAny, newState );
-                else
-                    current.addEdge( c.accept, newState );
+                // if ( c.acceptAny )
+                //     current.addEdge( (boolean) c.acceptAny, newState );
+                // else
+                //     current.addEdge( c.accept, newState );
+
+
+                // I need to somehow mark it as an accept any edge.
+                current.addEdge( c, newState );
 
                 
             }

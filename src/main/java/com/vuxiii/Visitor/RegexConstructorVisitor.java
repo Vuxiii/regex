@@ -101,6 +101,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
             // System.out.println( "tokenRep************************'" );
             TokenRegRepetition _token = (TokenRegRepetition) token;
+            if ( _token.value == null ) return;
 
             NFA_state<T> start = new NFA_state<>();
 
@@ -135,6 +136,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
 
             // System.out.println( nfaStack );
 
+            // System.exit(-1);
 
         }
     }
@@ -169,7 +171,9 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
 
                 nfaStack.push( concat );
 
-                // System.out.println( NFA_state.getStringRepresentation( concat ) );
+                System.out.println("concat".repeat(5));
+                System.out.println( NFA_state.getStringRepresentation( concat ) );
+                System.out.println("concat".repeat(5));
 
             }
         }
@@ -231,6 +235,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
 
     public void postVisit_range( Token token ) {
         if ( token instanceof TokenRegRange ) {
+            // System.exit(-1);
             // System.out.println( "TokenRegRange" );
             TokenRegRange _token = (TokenRegRange) token;
             if ( _token.right == null ) {
@@ -241,12 +246,17 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                     NFA_state<T> anchor = null;
 
                     NFA_state<T> stateToRepeat = nfaStack.pop();
+                    // clearFinish(stateToRepeat);
                     
-                    
+                    System.out.println( "State to repeat begin" );
+                    System.out.println(NFA_state.getStringRepresentation(stateToRepeat));
+                    System.out.println( "State to repeat end" );
+
                     NFA_state<T> start = new NFA_state<>( "RangeStart" );
                     nfaStack.push( start );
+                    // start.isFinal = false;
 
-                    for ( int i = 0; i < reps; ++i ) {
+                    for ( int i = 0; i < reps; ++i ) { // TODO: reps-1?
                         NFA_state<T> current = stateToRepeat.copy();
                     
                         start.addEdge( current );
@@ -261,8 +271,12 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
 
                         start = anchor; 
                     }
+                    clearFinish(nfaStack.peek());
                     addFinish( nfaStack.peek(), anchor );
-
+                    System.out.println( "Check me".repeat(10) );
+                    System.out.println( NFA_state.getStringRepresentation(nfaStack.peek()));
+                    System.out.println(anchor.name);
+                    System.out.println( "Check me".repeat(10) );
                 } else if ( _token.kind == TokenRangeKind.CHAR ) {
                     // System.out.println( "FAILURE");
                     System.exit( -1 );
@@ -297,9 +311,10 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
             // TokenRoot _token = (TokenRoot) token;
             // Convert to dfa. or not.
             NFA_state<T> tok = nfaStack.pop();
-            // System.out.println( "***************" );
-            // System.out.println( NFA_state.getStringRepresentation(tok) );
-            // System.out.println( "***************" );
+            System.out.println( "root***************" );
+            System.out.println( NFA_state.getStringRepresentation(tok) );
+            System.out.println( "root***************" );
+            // System.out.println( nfaStack.size() );
             // result = NFA_state.toDFA( tok );
             result = tok;
             // System.out.println( "asd " + result.name );

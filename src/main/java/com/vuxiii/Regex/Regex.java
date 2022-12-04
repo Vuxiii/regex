@@ -39,7 +39,11 @@ public class Regex<T> {
 
 
     public void addRegex( String regex, Function<String, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
-        nfa.addEdge( RegexParser.compileRegex( regex, constructor ) ); // add edge to DFA!!!!
+        NFA_state<T> n = RegexParser.compileRegex( regex, constructor );
+        nfa.addEdge( n ); // add edge to DFA!!!!
+        System.out.println( "-".repeat(10) );
+        System.out.println( NFA_state.getStringRepresentation(n) );
+        System.out.println( "-".repeat(10) );
     }
 
 
@@ -93,6 +97,12 @@ public class Regex<T> {
     }
 
     public void compile() { // Convert the internal NFA to a DFA
+        System.out.println( "FINAL------------------------------------" );
+        System.out.println( NFA_state.getStringRepresentation(nfa) );
+        System.out.println( "FINAL------------------------------------" );
         dfa = NFA_state.toDFA( nfa );
+        System.out.println( "Result DFA--------------------------------------------------------");
+        System.out.println( DFA_state.getStringRepresentation(dfa) );
+        System.out.println( "Result DFA--------------------------------------------------------");
     }
 }
