@@ -75,28 +75,24 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                 end.isFinal = true;
                 state.addEdge( EdgeKind.ANY, end );
     
+            } else if ( ((TokenChar)token).kind == TokenCharKind.ALPHA ) {
+                state = new NFA<>();
+                end = new NFA<>();
+                end.isFinal = true;
+                state.addEdge( EdgeKind.ALPHS, end );
+            } else if ( ((TokenChar)token).kind == TokenCharKind.DIGIT ) {
+                state = new NFA<>();
+                end = new NFA<>();
+                end.isFinal = true;
+                state.addEdge( EdgeKind.DIGITS, end );
             } else {
-                // System.out.println( "SOMETHING BAD HAPPEND IN visit_leaf" );
+                System.out.println( "SOMETHING BAD HAPPEND IN visit_leaf" );
                 System.exit(-1);
             }
             nfaStack.push( state );
             addFinish( state, end );
 
-        } else if ( token instanceof TokenRegExp ) {
-            // System.out.println( "tokenExp" );
-            // TokenRegExp _token = (TokenRegExp) token;
-            // if ( _token.right == null ) {
-                // DO nothing?
-            // } else {
-            
-            // }
-        } else if ( token instanceof TokenRegUdtryk ) {
-            
-            // System.out.println( "tokenUdtryk" );
-
-
-        } 
-        // System.out.println( nfaStack.size() );
+        }
     }
 
     public void postVisit_star( Token token ) {
@@ -213,23 +209,6 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         }
     }
 
-    public void postVisit_symbol( Token token ) {
-        if ( token instanceof TokenRegSymbol ) {
-            // System.out.println( "tokenSym" );
-            TokenRegSymbol _token = (TokenRegSymbol) token;
-            // sym -> ( nExp )
-            if ( _token.value instanceof TokenRegExp ) {
-                // Do nothing. Because of the parenthisese
-
-            // sym -> tChar
-            } else {
-                // Also do nothing... right??
-                // NFA_state<T> charState = nfaStack.pop(); 
-
-            }
-        }
-    }
-
     private void repeat( NFA<T> stateToRepeat, int reps ) {
         NFA<T> anchor = null;
 
@@ -260,33 +239,27 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         if ( token instanceof TokenRegRange ) {
             // System.exit(-1);
             // System.out.println( "TokenRegRange" );
+
             TokenRegRange _token = (TokenRegRange) token;
-            if ( _token.right == null ) {
-                if ( _token.kind == TokenRangeKind.INT ) {
-                    int reps = ((TokenRegDigit)_token.left).value;
+            if ( _token.kind == TokenRangeKind.INT ) {
+                TokenRegIntRange range = (TokenRegIntRange) _token.range;
+
+                if ( range.right == null ) {
+                    int reps = range.left.value;
                     if ( reps <= 0 ) {
                         System.out.println( "Reps should be above 0" );
                         System.exit(-1);
                     }
                     repeat( nfaStack.pop(), reps );
-                    
-                } else if ( _token.kind == TokenRangeKind.CHAR ) {
-                    // System.out.println( "FAILURE");
-                    System.exit( -1 );
-                    
                 } else {
-                    // System.out.println( "FAILURE");
-                    System.exit( -1 );
-                }
-            } else {
-                if ( _token.kind == TokenRangeKind.INT ) {
+                    // TokenRegIntRange range = (TokenRegIntRange) _token.range;
                     NFA<T> stateToRepeat = nfaStack.pop();
-                    int reps = ((TokenRegDigit)_token.right).value - ((TokenRegDigit)_token.left).value;
-                    if ( ((TokenRegDigit)_token.left).value <= 0 || ((TokenRegDigit)_token.left).value >= ((TokenRegDigit)_token.right).value ) {
-                        System.out.println( "Invalid range: " + ((TokenRegDigit)_token.left).value + " to " + ((TokenRegDigit)_token.right).value );
+                    int reps = range.right.value - range.left.value;
+                    if ( range.left.value <= 0 || range.left.value >= range.right.value ) {
+                        System.out.println( "Invalid range: " + range.left.value + " to " + range.right.value );
                         System.exit(-1);
                     }
-                    repeat( stateToRepeat, ((TokenRegDigit)_token.left).value );
+                    repeat( stateToRepeat, range.left.value );
                     
                     NFA<T> anchor = null;
 
@@ -307,16 +280,15 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                         }
                         start.add( anchor );
                     }
-
-                } else if ( _token.kind == TokenRangeKind.CHAR ) {
-                    // System.out.println( "FAILURE");
-                    System.exit( -1 );
-                    
-                } else {
-                    // System.out.println( "FAILURE");
-                    System.exit( -1 );
                 }
+            } else if ( _token.kind == TokenRangeKind.CHAR ) {
+                System.out.println( "FAILURE");
+                System.exit( -1 );
+            } else {
+                System.out.println( "Invalid rangekind, or missing implementation" );
+                System.exit(-1);
             }
+
             
 
         } 

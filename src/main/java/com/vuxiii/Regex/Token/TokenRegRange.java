@@ -6,24 +6,22 @@ public class TokenRegRange implements Token, RegRepetition, TokenOperator {
 
     public final Term nonTerminal;
 
-    public final Token left;
-    public final Token right;
+    public final Token range;
 
     public final TokenRangeKind kind;
 
-    public TokenRegRange( TokenRegDigit singleRange, TokenRangeKind kind, Term nonTerminal ) {
-        left = singleRange;
-        right = null;
+    public TokenRegRange( Token range, TokenRangeKind kind, Term nonTerminal ) {
+        this.range = range;
         this.nonTerminal = nonTerminal;
         this.kind = kind;
     }
 
-    public TokenRegRange( TokenRegDigit left, TokenRegDigit right, TokenRangeKind kind, Term nonTerminal ) {
-        this.left = left;
-        this.right = right;
-        this.nonTerminal = nonTerminal;
-        this.kind = kind;
-    }
+    // public TokenRegRange( Token left, Token right, TokenRangeKind kind, Term nonTerminal ) {
+    //     this.left = left;
+    //     this.right = right;
+    //     this.nonTerminal = nonTerminal;
+    //     this.kind = kind;
+    // }
 
 
     @Override
@@ -32,19 +30,19 @@ public class TokenRegRange implements Token, RegRepetition, TokenOperator {
     }
  
     public String toString() {
-        if ( right == null )
-            return "[Range ->" + left.toString() + "]";
-        return "[Range -> " + left.toString() + "-" + right.toString() + "]";
+        // if ( right == null )
+        //     return "[Range ->" + left.toString() + "]";
+        return "[Range -> " + range.toString() + "]";
     }
 
 
     @Override
     public void accept(VisitorBase visitor) {
         visitor.preVisit( this );
-        left.accept( visitor );
+        range.accept( visitor );
         visitor.midVisit( this );
-        if ( right != null )
-            right.accept( visitor );  
+        // if ( right != null )
+        //     right.accept( visitor );  
         visitor.postVisit( this );
     }
 }

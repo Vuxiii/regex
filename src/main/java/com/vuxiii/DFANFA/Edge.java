@@ -34,7 +34,7 @@ public class Edge<StateType extends NameInterface> {
     }
 
     public boolean canConsume( char c ) {
-        if ( kind == EdgeKind.ANY ) return true;
+        if ( kind == EdgeKind.ANY && c != '\n' ) return true;
         if ( kind == EdgeKind.DIGITS && Character.isDigit(c) ) return true;
         if ( kind == EdgeKind.ALPHS && Character.isLetter(c) ) return true;
         if ( kind == EdgeKind.STD && c == accept ) return true;

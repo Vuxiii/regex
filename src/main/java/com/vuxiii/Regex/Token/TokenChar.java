@@ -15,12 +15,18 @@ public class TokenChar implements Token, TokenNumber {
         this.kind = kind;
     }
 
+    public TokenChar( Term term, TokenCharKind kind ) {
+        this.value = null;
+        this.term = term;
+        this.kind = kind;
+    }
+
     public Term getTerm() {
         return term;
     }
 
     public String toString() {
-        return "[" + term.toString() + " ; " + value + "]";
+        return "[" + term.toString() + " ; " + ( kind == TokenCharKind.CHAR ? value : ":" + kind + ":" ) + "]";
     }
 
     @Override

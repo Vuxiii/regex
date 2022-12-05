@@ -2,11 +2,11 @@ package com.vuxiii.Regex.Token;
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
 
-public class TokenIdentifier implements Token {
+public class TokenAlphs implements Token {
 
     public final String value;
 
-    public TokenIdentifier( String id ) {
+    public TokenAlphs( String id ) {
         value = id;
     }
 
