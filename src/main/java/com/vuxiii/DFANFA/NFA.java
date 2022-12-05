@@ -45,10 +45,11 @@ public class NFA<T> implements NameInterface {
         boolean found = false;
 
         for ( Edge<NFA<T>> e : out ) {
-            if ( e.accept == c )
-                return true;
             if ( e.kind == EdgeKind.EPSILON )
                 found = e.to.canConsume( c );
+            else if ( e.canConsume( c ) )
+                return true;
+            
         }
 
         return found;
@@ -156,7 +157,7 @@ public class NFA<T> implements NameInterface {
         List<NFA<T>> list = new ArrayList<>();
         
         for ( Edge<NFA<T>> e : out ) {
-            if ( e.accept == c ) 
+            if ( e.kind != EdgeKind.EPSILON && e.canConsume( c ) ) 
                 list.add( e.to );
         }
 

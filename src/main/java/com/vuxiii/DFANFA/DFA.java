@@ -62,7 +62,7 @@ public class DFA<T> implements NameInterface {
 
     public boolean canConsume( char c )  {
         for ( Edge<DFA<T>> e : out )
-            if ( e.accept() == c || e.kind == EdgeKind.ANY )
+            if ( e.canConsume( c ) )
                 return true;
         return false;
     }
@@ -70,7 +70,7 @@ public class DFA<T> implements NameInterface {
     public DFA<T> consume( char c ) {
         Edge<DFA<T>> acceptEdge = null;
         for ( Edge<DFA<T>> e : out ) {
-            if ( e.accept() == c || e.kind == EdgeKind.ANY  ) {
+            if ( e.canConsume( c )  ) {
                 acceptEdge = e;
                 break;
             }

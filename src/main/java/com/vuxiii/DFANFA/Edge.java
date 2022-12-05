@@ -33,6 +33,14 @@ public class Edge<StateType extends NameInterface> {
         return accept;
     }
 
+    public boolean canConsume( char c ) {
+        if ( kind == EdgeKind.ANY ) return true;
+        if ( kind == EdgeKind.DIGITS && Character.isDigit(c) ) return true;
+        if ( kind == EdgeKind.ALPHS && Character.isLetter(c) ) return true;
+        if ( kind == EdgeKind.STD && c == accept ) return true;
+        return false;
+    } 
+
     public String toString() {
         return "Edge " + from.name() + " -" + ( kind == EdgeKind.ANY ? "any" 
                                                 : kind == EdgeKind.EPSILON ? "epsilon" 
