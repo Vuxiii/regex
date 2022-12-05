@@ -235,58 +235,54 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         addFinish( nfaStack.peek(), anchor );
     }
 
-    public void postVisit_range( Token token ) {
-        if ( token instanceof TokenRegRange ) {
+    public void postVisit_IntRange( Token token ) {
+        if ( token instanceof TokenRegIntRange ) {
             // System.exit(-1);
             // System.out.println( "TokenRegRange" );
 
-            TokenRegRange _token = (TokenRegRange) token;
-            if ( _token.kind == TokenRangeKind.INT ) {
-                TokenRegIntRange range = (TokenRegIntRange) _token.range;
-
-                if ( range.right == null ) {
-                    int reps = range.left.value;
-                    if ( reps <= 0 ) {
-                        System.out.println( "Reps should be above 0" );
-                        System.exit(-1);
-                    }
-                    repeat( nfaStack.pop(), reps );
-                } else {
-                    // TokenRegIntRange range = (TokenRegIntRange) _token.range;
-                    NFA<T> stateToRepeat = nfaStack.pop();
-                    int reps = range.right.value - range.left.value;
-                    if ( range.left.value <= 0 || range.left.value >= range.right.value ) {
-                        System.out.println( "Invalid range: " + range.left.value + " to " + range.right.value );
-                        System.exit(-1);
-                    }
-                    repeat( stateToRepeat, range.left.value );
-                    
-                    NFA<T> anchor = null;
-
-                    List<NFA<T>> start = NFA.collectFinals( nfaStack.peek() );
-                    
-                    for ( int i = 0; i < reps; ++i ) {
-                        NFA<T> current = stateToRepeat.copy();
-                        
-                        start.forEach( startState -> startState.addEdge( current ) );
-
-                        anchor = new NFA<>( "Anchor" );
-                        
-                        start = NFA.collectFinals( current );
-                        for ( NFA<T> finish : start ) {
-                            finish.addEdge( anchor );
-                            addFinish( nfaStack.peek(), anchor );
-
-                        }
-                        start.add( anchor );
-                    }
+            TokenRegIntRange range = (TokenRegIntRange) token;
+            
+            if ( range.right == null ) {
+                int reps = range.left.value;
+                if ( reps <= 0 ) {
+                    System.out.println( "Reps should be above 0" );
+                    System.exit(-1);
                 }
-            } else if ( _token.kind == TokenRangeKind.CHAR ) {
-                System.out.println( "FAILURE");
-                System.exit( -1 );
+                repeat( nfaStack.pop(), reps );
             } else {
-                System.out.println( "Invalid rangekind, or missing implementation" );
-                System.exit(-1);
+                
+                // TokenRegIntRange range = (TokenRegIntRange) _token.range;
+                NFA<T> stateToRepeat = nfaStack.pop();
+                int reps = range.right.value - range.left.value;
+                if ( range.left.value <= 0 || range.left.value >= range.right.value ) {
+                    System.out.println( "Invalid range: " + range.left.value + " to " + range.right.value );
+                    System.exit(-1);
+                }
+                repeat( stateToRepeat, range.left.value );
+                
+                NFA<T> anchor = null;
+                Set<NFA<T>> start = Utils.toSet( NFA.collectFinals( nfaStack.peek() ) );
+                // System.out.println( start );
+                
+                for ( int i = 0; i < reps; ++i ) {
+                    NFA<T> current = stateToRepeat.copy();
+                    
+                    start.forEach( startState -> startState.addEdge( current ) );
+
+                    anchor = new NFA<>( "Anchor" );
+                    
+                    
+                    start.addAll( NFA.collectFinals( current ) );
+                    for ( NFA<T> finish : start ) {
+                        finish.addEdge( anchor );
+                        addFinish( nfaStack.peek(), anchor );
+                    }
+                    // start.add( anchor );
+                    // System.out.println( "--------------------------------------------");
+                    // System.out.println( start );
+                    // System.exit(-1);
+                }
+                // System.out.println( NFA.getStringRepresentation(nfaStack.peek()));
             }
 
             

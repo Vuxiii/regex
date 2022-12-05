@@ -18,7 +18,7 @@ public class App {
         // regex.match( "Hej me ig :)daad" );
      
         // regex = new Regex<>( ".*", (id) -> new TokenAlphs( id ) );
-        regex.addRegex( "01{3}", (id) -> new TokenAlphs( id ) );
+        regex.addRegex( "01{1-4}5", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "0[:digit:]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( ".*", (id) -> new TokenIdentifier( id ) );
         // regex.addRegex( "(hej){3}", (id) -> new TokenIdentifier( id ) );

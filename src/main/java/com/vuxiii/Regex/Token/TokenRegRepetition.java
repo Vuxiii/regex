@@ -9,7 +9,7 @@ public class TokenRegRepetition implements Token {
 
     public final TokenLCurl lcurl;
     public final TokenRCurl rcurl;
-    public final TokenRegRange range;
+    public final TokenRegIntRange range;
 
     public TokenRegRepetition( RegRepetition value, Term nonTerminal ) {
         this.value = value;
@@ -19,7 +19,7 @@ public class TokenRegRepetition implements Token {
         range = null;
     }
 
-    public TokenRegRepetition( TokenLCurl lcurl, TokenRegRange token, TokenRCurl rcurl, Term nonTerminal ) {
+    public TokenRegRepetition( TokenLCurl lcurl, TokenRegIntRange token, TokenRCurl rcurl, Term nonTerminal ) {
         this.lcurl = lcurl;
         this.rcurl = rcurl;
         range = token;

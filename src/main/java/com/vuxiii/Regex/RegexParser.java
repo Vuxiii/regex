@@ -345,10 +345,10 @@ public class RegexParser {
         } );
 
         // TEST
-        g.addRuleWithReduceFunction( nRepetition, List.of( tLCurl, nRange, tRCurl ), (tokens) -> {
+        g.addRuleWithReduceFunction( nRepetition, List.of( tLCurl, nIntRange, tRCurl ), (tokens) -> {
             // System.out.println( "In reduce with { RANGE }" );
             TokenLCurl lcurl = (TokenLCurl) tokens.get(0);
-            TokenRegRange token = (TokenRegRange) tokens.get(1);
+            TokenRegIntRange token = (TokenRegIntRange) tokens.get(1);
             TokenRCurl rcurl = (TokenRCurl) tokens.get(2);
             return new TokenRegRepetition( lcurl, token, rcurl, nRepetition );
         } );

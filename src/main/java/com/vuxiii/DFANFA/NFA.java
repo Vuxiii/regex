@@ -304,11 +304,18 @@ public class NFA<T> implements NameInterface {
         // System.out.println( "---------------------**********************'" );
         // Set the ending states
         // System.out.println( DFAToNFA );
+        // DFAToNFA.forEach( (dfa, nfa) -> {
+        //     System.out.println( "DFA: " + dfa.name ); 
+        //     nfa.forEach( n -> System.out.println( "\tNFA: " + n.name + " " + n.isFinal ));
+        // });
         // System.out.println( "Setting finish states for DFA" );
         for ( DFA<T> dfa : DFAToNFA.keySet() ) {
             // System.out.println( "checking DFA state" + dfa.name );
             for ( NFA<T> nfa : DFAToNFA.get( dfa ) ) {
                 if ( nfa.isFinal ) {
+                    // System.out.println( "FOUND FINAL" );
+                    // System.out.println( nfa.name );
+                    // System.out.println( dfa.name );
                     dfa.isFinal = true;
                     dfa.constructor = nfa.constructor;
                     // System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
