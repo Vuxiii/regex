@@ -1,4 +1,4 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ public class Term {
     public static Term QUESTION = new Term( "?" );
     public static Map<String, Term> terms = new HashMap<>();
 
-    String name = null;
+    public String name = null;
 
     public Term() {}
     public Term( String name ) { 

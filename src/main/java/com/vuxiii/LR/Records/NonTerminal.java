@@ -1,7 +1,7 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 public class NonTerminal extends Term {
-    final boolean is_start;
+    public final boolean is_start;
 
     public NonTerminal( String n ) {
         super( n );

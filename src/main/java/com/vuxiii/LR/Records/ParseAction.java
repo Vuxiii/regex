@@ -1,4 +1,4 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 public interface ParseAction {
     

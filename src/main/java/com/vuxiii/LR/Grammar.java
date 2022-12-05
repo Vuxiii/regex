@@ -11,6 +11,12 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import com.vuxiii.LR.records.LRRule;
+import com.vuxiii.LR.records.LRState;
+import com.vuxiii.LR.records.NonTerminal;
+import com.vuxiii.LR.records.Rule;
+import com.vuxiii.LR.records.Term;
+import com.vuxiii.LR.records.Terminal;
 import com.vuxiii.Regex.Token.*;
 import com.vuxiii.Utils.*;
 

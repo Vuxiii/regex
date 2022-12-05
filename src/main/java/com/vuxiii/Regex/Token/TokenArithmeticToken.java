@@ -1,6 +1,6 @@
 package com.vuxiii.Regex.Token;
 
-import com.vuxiii.LR.Term;
+import com.vuxiii.LR.records.Term;
 import com.vuxiii.Visitor.*;
 
 public class TokenArithmeticToken implements Token {

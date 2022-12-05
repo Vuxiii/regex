@@ -7,6 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.vuxiii.LR.records.LRRule;
+import com.vuxiii.LR.records.LRState;
+import com.vuxiii.LR.records.NonTerminal;
+import com.vuxiii.LR.records.ParseAccept;
+import com.vuxiii.LR.records.ParseAction;
+import com.vuxiii.LR.records.ParseError;
+import com.vuxiii.LR.records.ParseGoto;
+import com.vuxiii.LR.records.ParseReduce;
+import com.vuxiii.LR.records.ParseShift;
+import com.vuxiii.LR.records.ParserState;
+import com.vuxiii.LR.records.Rule;
+import com.vuxiii.LR.records.Term;
+import com.vuxiii.LR.records.Terminal;
 import com.vuxiii.Utils.*;
 
 public class ParseTable {
@@ -81,13 +94,13 @@ public class ParseTable {
             getAction.add( map );
         }
 
-        for ( int i = 0; i < getAction.size(); ++i ) {
-            Map<Term, ParseAction> state = getAction.get( i );
+        // for ( int i = 0; i < getAction.size(); ++i ) {
+        //     Map<Term, ParseAction> state = getAction.get( i );
         
             // System.out.println( "State: " + i ); 
             // state.forEach( (t, action) -> System.out.println( "\t" + t.toString() + "\t-> " + action.toString() ) ); 
         
-        }
+        // }
 
     }
 

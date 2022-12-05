@@ -1,4 +1,4 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -16,12 +16,12 @@ public class LRState {
     
 
     public final int id;
-    Map<NonTerminal, List<LRRule> > rules = new HashMap<>();
-    Set<LRRule> containedRules = new HashSet<>();
-    Set<LRRuleIdentifier> containedIDRules = new HashSet<>();
+    public Map<NonTerminal, List<LRRule> > rules = new HashMap<>();
+    public Set<LRRule> containedRules = new HashSet<>();
+    public Set<LRRuleIdentifier> containedIDRules = new HashSet<>();
     // List<Integer> dot = new ArrayList<>();
 
-    Map<Term, LRState> move_to_state = new HashMap<>();
+    public Map<Term, LRState> move_to_state = new HashMap<>();
 
     public LRState() {
         id = count++;
@@ -29,7 +29,7 @@ public class LRState {
 
 
 
-    void add( NonTerminal X, LRRule r) {
+    public void add( NonTerminal X, LRRule r) {
         containedRules.add( r );
         containedIDRules.add( new LRRuleIdentifier( r.id, r.dot ) );
         containedRules.add( r );
@@ -39,7 +39,7 @@ public class LRState {
         else
             rules.put( X, Utils.toList( r ) );
     }
-    List<LRRule> get_rule( NonTerminal N ) { return rules.get( N ); }
+    public List<LRRule> get_rule( NonTerminal N ) { return rules.get( N ); }
 
     // int get_dot( int i ) { return dot.get( i ); }
 

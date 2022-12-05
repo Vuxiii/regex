@@ -1,7 +1,7 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 public class Terminal extends Term {
-    boolean is_epsilon = false;
+    public boolean is_epsilon = false;
     public boolean is_EOP = false;
     /**
      * This constructor makes an Epsilon terminal

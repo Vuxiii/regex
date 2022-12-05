@@ -1,4 +1,4 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 public class Rule {
     public static Term EOR = new Term( "EndOfRule" );
     public static Term EOP = new Term( "EndOfParse" );
-    List<Term> terms = new ArrayList<>();
+    public List<Term> terms = new ArrayList<>();
 
     public Rule( List<Term> terms ) {
         this.terms.addAll( terms );

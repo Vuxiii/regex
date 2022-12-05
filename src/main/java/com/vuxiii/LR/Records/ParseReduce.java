@@ -1,19 +1,18 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.records;
 
 import java.util.List;
 import java.util.function.Function;
 
-import com.vuxiii.Regex.Token.*;
+import com.vuxiii.Regex.Token.Token;
 
-public class ParseAccept implements ParseAction {
-    
+public class ParseReduce implements ParseAction {
     public final int id;
 
     public final LRRule rule;
 
     private final Function<List<Token>, Token> reduceFunction;
 
-    public ParseAccept( int id, LRRule rule, Function<List<Token>, Token> reduceFunction ) {
+    public ParseReduce( int id, LRRule rule, Function<List<Token>, Token> reduceFunction ) {
         this.id = id;
         this.rule = rule;
         this.reduceFunction = reduceFunction;
@@ -24,6 +23,6 @@ public class ParseAccept implements ParseAction {
     }
 
     public String toString() {
-        return "a";
+        return "r" + id;
     }
 }

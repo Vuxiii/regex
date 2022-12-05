@@ -1,4 +1,4 @@
-package com.vuxiii.LR;
+package com.vuxiii.LR.Records;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +14,7 @@ public class LRRule extends Rule {
     public final int id;
     public final int dot;
     public final NonTerminal X;
-    Set<Term> lookahead = new HashSet<>();
+    public Set<Term> lookahead = new HashSet<>();
 
     public LRRule( NonTerminal X, List<Term> terms, Set<Term> lookahead ) {
         super( terms );
