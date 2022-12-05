@@ -7,19 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.vuxiii.LR.records.LRRule;
-import com.vuxiii.LR.records.LRState;
-import com.vuxiii.LR.records.NonTerminal;
-import com.vuxiii.LR.records.ParseAccept;
-import com.vuxiii.LR.records.ParseAction;
-import com.vuxiii.LR.records.ParseError;
-import com.vuxiii.LR.records.ParseGoto;
-import com.vuxiii.LR.records.ParseReduce;
-import com.vuxiii.LR.records.ParseShift;
-import com.vuxiii.LR.records.ParserState;
-import com.vuxiii.LR.records.Rule;
-import com.vuxiii.LR.records.Term;
-import com.vuxiii.LR.records.Terminal;
+import com.vuxiii.LR.Records.LRRule;
+import com.vuxiii.LR.Records.LRState;
+import com.vuxiii.LR.Records.NonTerminal;
+import com.vuxiii.LR.Records.ParseAccept;
+import com.vuxiii.LR.Records.ParseAction;
+import com.vuxiii.LR.Records.ParseError;
+import com.vuxiii.LR.Records.ParseGoto;
+import com.vuxiii.LR.Records.ParseReduce;
+import com.vuxiii.LR.Records.ParseShift;
+import com.vuxiii.LR.Records.ParserState;
+import com.vuxiii.LR.Records.Rule;
+import com.vuxiii.LR.Records.Term;
+import com.vuxiii.LR.Records.Terminal;
 import com.vuxiii.Utils.*;
 
 public class ParseTable {

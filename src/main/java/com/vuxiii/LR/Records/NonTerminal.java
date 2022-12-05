@@ -1,4 +1,4 @@
-package com.vuxiii.LR.records;
+package com.vuxiii.LR.Records;
 
 public class NonTerminal extends Term {
     public final boolean is_start;

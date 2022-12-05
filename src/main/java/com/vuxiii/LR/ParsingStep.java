@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.vuxiii.LR.records.LRRule;
-import com.vuxiii.LR.records.ParseAccept;
-import com.vuxiii.LR.records.ParseAction;
-import com.vuxiii.LR.records.ParseError;
-import com.vuxiii.LR.records.ParseGoto;
-import com.vuxiii.LR.records.ParseReduce;
-import com.vuxiii.LR.records.ParseShift;
-import com.vuxiii.LR.records.ParserState;
+import com.vuxiii.LR.Records.LRRule;
+import com.vuxiii.LR.Records.ParseAccept;
+import com.vuxiii.LR.Records.ParseAction;
+import com.vuxiii.LR.Records.ParseError;
+import com.vuxiii.LR.Records.ParseGoto;
+import com.vuxiii.LR.Records.ParseReduce;
+import com.vuxiii.LR.Records.ParseShift;
+import com.vuxiii.LR.Records.ParserState;
 import com.vuxiii.Regex.Token.Token;
 import com.vuxiii.Utils.*;
 

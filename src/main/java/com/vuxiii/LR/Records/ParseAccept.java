@@ -1,4 +1,4 @@
-package com.vuxiii.LR.records;
+package com.vuxiii.LR.Records;
 
 import java.util.List;
 import java.util.function.Function;

@@ -1,4 +1,4 @@
-package com.vuxiii.LR.records;
+package com.vuxiii.LR.Records;
 
 public record LRRuleIdentifier(int id, int dot) {
     

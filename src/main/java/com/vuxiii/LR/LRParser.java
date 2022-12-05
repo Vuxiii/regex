@@ -12,14 +12,14 @@ import java.util.function.Function;
 
 import com.vuxiii.Utils.*;
 import com.vuxiii.LR.*;
-import com.vuxiii.LR.records.LRRule;
-import com.vuxiii.LR.records.LRRuleIdentifier;
-import com.vuxiii.LR.records.LRState;
-import com.vuxiii.LR.records.NonTerminal;
-import com.vuxiii.LR.records.ParserState;
-import com.vuxiii.LR.records.Rule;
-import com.vuxiii.LR.records.Term;
-import com.vuxiii.LR.records.Terminal;
+import com.vuxiii.LR.Records.LRRule;
+import com.vuxiii.LR.Records.LRRuleIdentifier;
+import com.vuxiii.LR.Records.LRState;
+import com.vuxiii.LR.Records.NonTerminal;
+import com.vuxiii.LR.Records.ParserState;
+import com.vuxiii.LR.Records.Rule;
+import com.vuxiii.LR.Records.Term;
+import com.vuxiii.LR.Records.Terminal;
 
 public class LRParser {
     

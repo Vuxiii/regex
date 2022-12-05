@@ -1,4 +1,4 @@
-package com.vuxiii.LR.records;
+package com.vuxiii.LR.Records;
 
 public class Terminal extends Term {
     public boolean is_epsilon = false;
