@@ -4,7 +4,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-import com.vuxiii.DFA.DFA_state;
+import com.vuxiii.DFANFA.DFA;
+import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.Grammar;
 import com.vuxiii.LR.LRParser;
 import com.vuxiii.LR.LRRule;
@@ -13,7 +14,6 @@ import com.vuxiii.LR.ParseTable;
 import com.vuxiii.LR.ParserState;
 import com.vuxiii.LR.ParsingStep;
 import com.vuxiii.LR.Terminal;
-import com.vuxiii.NFA.NFA_state;
 import com.vuxiii.Regex.Token.*;
 import com.vuxiii.Utils.Utils;
 import com.vuxiii.Visitor.LeafVisitor;
@@ -57,7 +57,7 @@ public class RegexParser {
 
     // private static DFA_state regexDFA;
 
-    public static<T> NFA_state<T> compileRegex( String regex, Function<String, T> constructor ) { 
+    public static<T> NFA<T> compileRegex( String regex, Function<String, T> constructor ) { 
         if ( firstSetup )
             setup();
         firstSetup = false;
@@ -77,8 +77,8 @@ public class RegexParser {
 
         // System.out.println( DFA_state.getStringRepresentation( reg.result ) );
 
-        NFA_state<T> nfa = reg.result;
-        NFA_state.collectFinals(nfa).forEach( n -> n.constructor = constructor );;
+        NFA<T> nfa = reg.result;
+        NFA.collectFinals(nfa).forEach( n -> n.constructor = constructor );;
         // nfa.constructor = constructor;
         // Return the result.
         return nfa;

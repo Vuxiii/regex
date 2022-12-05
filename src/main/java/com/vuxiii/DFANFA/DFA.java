@@ -1,4 +1,4 @@
-package com.vuxiii.DFA;
+package com.vuxiii.DFANFA;
 
 
 import java.util.ArrayList;
@@ -6,71 +6,71 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Function;
 
-public class DFA_state<T> {
+public class DFA<T> implements NameInterface {
     private static int c = 0;
     public String name;
 
     public Function<String, T> constructor;
 
     public boolean isFinal = false;
-    List<DFA_edge<T>> out;
-    List<DFA_edge<T>> in;
+    List<Edge<DFA<T>>> out;
+    List<Edge<DFA<T>>> in;
 
-    public DFA_state( String name ) {
+    public DFA( String name ) {
         c++;
         this.name = name;
         out = new ArrayList<>();
     }
 
-    public DFA_state( String name, boolean isFinal ) {
+    public DFA( String name, boolean isFinal ) {
         this( name );
         this.isFinal = isFinal;
     }
 
-    public DFA_state<T> registerWord( String word ) {
+    public DFA<T> registerWord( String word ) {
         if ( word.length() == 0 ) return this;
 
         char c = word.charAt( 0 );
 
-        DFA_state<T> newState = null;
+        DFA<T> newState = null;
 
-        for ( DFA_edge<T> e : out ) {
+        for ( Edge<DFA<T>> e : out ) {
             if ( e.accept() == c ) {
                 newState = e.to();
             }
         }
 
         if ( newState == null ) {
-            newState = new DFA_state<>( "State: " + (DFA_state.c+1), word.length() == 1 ); 
+            newState = new DFA<>( "State: " + (DFA.c+1), word.length() == 1 ); 
             addEdge( c, newState );
         }
 
         return newState.registerWord( word.substring( 1 ) );
     }
 
-    public void addEdge( char c, DFA_state<T> to ) {
-        DFA_edge<T> e = new DFA_edge<>( c );
+    public void addEdge( char c, DFA<T> to ) {
+        Edge<DFA<T>> e = new Edge<>( c );
         e.to = to;
         out.add( e );
     }
 
-    public void addEdge( boolean isWild, DFA_state<T> to ) {
-        DFA_edge<T> e = new DFA_edge<>( isWild );
+    public void addEdge( EdgeKind kind , DFA<T> to ) {
+        Edge<DFA<T>> e = new Edge<>( kind );
         e.to = to;
         out.add( e );
     }
 
     public boolean canConsume( char c )  {
-        for ( DFA_edge<T> e : out )
-            if ( e.accept() == c || e.acceptAny )
+        for ( Edge<DFA<T>> e : out )
+            if ( e.accept() == c || e.kind == EdgeKind.ANY )
                 return true;
         return false;
     }
 
-    public DFA_state<T> consume( char c ) {
-        DFA_edge<T> acceptEdge = null;
-        for ( DFA_edge<T> e : out ) {
-            if ( e.accept() == c || e.acceptAny ) {
+    public DFA<T> consume( char c ) {
+        Edge<DFA<T>> acceptEdge = null;
+        for ( Edge<DFA<T>> e : out ) {
+            if ( e.accept() == c || e.kind == EdgeKind.ANY  ) {
                 acceptEdge = e;
                 break;
             }
@@ -85,8 +85,8 @@ public class DFA_state<T> {
      * @param s The string to be consumed
      * @return The last state
      */
-    public DFA_state<T> consumeWord( String s ) {
-        DFA_state<T> current = this;
+    public DFA<T> consumeWord( String s ) {
+        DFA<T> current = this;
         for ( char c : s.toCharArray() )
             current = current.consume( c );
         return current;
@@ -97,7 +97,7 @@ public class DFA_state<T> {
     //     DFA_state q = new DFA_state( name, isFinal );
     //     for ( Edge e : out() ) {
     //         DFA_state s = e.to().copy();
-    //         DFA_edge ecopy = new DFA_edge( e.accept() );
+    //         Edge ecopy = new Edge( e.accept() );
     //         ecopy.from = q;
     //         ecopy.to = s;
     //         s.out.add( ecopy );
@@ -111,7 +111,7 @@ public class DFA_state<T> {
         s += "\t";
         if ( out.size() > 0 ) {
             s += "Can go to the following states:\n";
-            for ( DFA_edge<T> e : out ) {
+            for ( Edge<DFA<T>> e : out ) {
                 s += "\t[" + e.accept() + "] -> " + e.to().name() + "\n";
             }
         } else {
@@ -121,29 +121,29 @@ public class DFA_state<T> {
         return s;
     }
 
-    public static <T> List<DFA_state<T>> collectStates( DFA_state<T> dfa ) {
-        List<DFA_state<T>> q = new LinkedList<>();
+    public static <T> List<DFA<T>> collectStates( DFA<T> dfa ) {
+        List<DFA<T>> q = new LinkedList<>();
         _collectStates( dfa, q );
 
         return q;
     }
 
-    private static <T> void _collectStates( DFA_state<T> dfa, List<DFA_state<T>> q ) {
+    private static <T> void _collectStates( DFA<T> dfa, List<DFA<T>> q ) {
         if ( q.contains( dfa ) ) return;
         q.add( dfa );
-        for ( DFA_edge<T> e : dfa.out() )
+        for ( Edge<DFA<T>> e : dfa.out() )
             _collectStates( e.to(), q );
     }
 
-    public static<T> String getStringRepresentation( DFA_state<T> nfa ) {
+    public static<T> String getStringRepresentation( DFA<T> nfa ) {
         String s = "";
-        List<DFA_state<T>> states = DFA_state.collectStates( nfa );
-        for ( DFA_state<T> state : states ) {
+        List<DFA<T>> states = DFA.collectStates( nfa );
+        for ( DFA<T> state : states ) {
             s += ( "State " + state.name() + "\n" );
             s += ( "\tisFinal = " + state.isFinal() + "\n" );
             s += ( "\tout edges:" + "\n" );
-            for ( DFA_edge<T> e : state.out() ) {
-                s += ( "\t\t[" + e.accept() + " -> State " + e.to().name() + "]" + "\n" );
+            for ( Edge<DFA<T>> e : state.out() ) {
+                s += ( "\t\t[" + (e.kind == EdgeKind.STD ? e.accept() : e.kind ) + " -> State " + e.to().name() + "]" + "\n" );
             }
         }
 
@@ -154,11 +154,11 @@ public class DFA_state<T> {
         return name;
     }
 
-    public List<DFA_edge<T>> in() {
+    public List<Edge<DFA<T>>> in() {
         return in;
     }
 
-    public List<DFA_edge<T>> out() {
+    public List<Edge<DFA<T>>> out() {
         return out;
     }
 

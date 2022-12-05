@@ -5,20 +5,20 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.function.Function;
 
-import com.vuxiii.DFA.DFA_state;
+import com.vuxiii.DFANFA.DFA;
+import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.Grammar;
-import com.vuxiii.NFA.NFA_state;
 
 public class Regex<T> {
-    public DFA_state<T> dfa;
+    public DFA<T> dfa;
     // public Function<String, T> constructor = null;
 
-    private NFA_state<T> nfa = new NFA_state<>( "entry", false );
+    private NFA<T> nfa = new NFA<>( "entry", false );
 
     // private static Grammar regexParser = null;
 
     public Regex() {
-        dfa = NFA_state.toDFA( nfa );
+        dfa = NFA.toDFA( nfa );
     }
 
     public Regex( String regex, Function<String, T> constructor ) { 
@@ -39,7 +39,7 @@ public class Regex<T> {
 
 
     public void addRegex( String regex, Function<String, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
-        NFA_state<T> n = RegexParser.compileRegex( regex, constructor );
+        NFA<T> n = RegexParser.compileRegex( regex, constructor );
         nfa.addEdge( n ); // add edge to DFA!!!!
         // System.out.println( "-".repeat(10) );
         // System.out.println( NFA_state.getStringRepresentation(n) );
@@ -56,7 +56,7 @@ public class Regex<T> {
         // System.out.println( "\n".repeat(3) );
         // System.out.println( DFA_state.getStringRepresentation(dfa) );
         Scanner in = new Scanner( input );
-        DFA_state<T> current = dfa;
+        DFA<T> current = dfa;
         boolean foundMatch = false;
         while( in.hasNextLine() ) {
             String line = in.nextLine();
@@ -100,7 +100,7 @@ public class Regex<T> {
         // System.out.println( "FINAL------------------------------------" );
         // System.out.println( NFA_state.getStringRepresentation(nfa) );
         // System.out.println( "FINAL------------------------------------" );
-        dfa = NFA_state.toDFA( nfa );
+        dfa = NFA.toDFA( nfa );
         // System.out.println( "Result DFA--------------------------------------------------------");
         // System.out.println( DFA_state.getStringRepresentation(dfa) );
         // System.out.println( "Result DFA--------------------------------------------------------");
