@@ -169,11 +169,11 @@ public class RegexParser {
 
                             int left = Integer.valueOf( s.substring(0, s.indexOf("-") ) );
                             int right = Integer.valueOf( s.substring( s.indexOf("-")+1 ) );
-                            System.out.println( s + " " + left + " " + " " + right );
+                            // System.out.println( s + " " + left + " " + " " + right );
 
                             tokens.add( lparen );
                             for ( ; left <= right; left++ ) {
-                                System.out.println( left );
+                                // System.out.println( left );
                                 tokens.add( new TokenRegDigit( left, tDigit ) );
                                 if ( left != right ) {
                                     tokens.add( union );
@@ -181,21 +181,22 @@ public class RegexParser {
                             }
                             tokens.add( rparen );
                             tokens.add( concat );
-                            System.out.println( tokens );
+                            // System.out.println( tokens );
 
                             i += s.length() + 1; // + 1 for [ ]
 
                             // System.exit(-1);
-                        } else if ( regex.substring(i).matches( "^\\[[a-z]-[a-z]\\].*" ) ) {
+                        } else if ( regex.substring(i).matches( "^\\[[a-z]-[a-z]\\].*" ) || 
+                                    regex.substring(i).matches( "^\\[[A-Z]-[A-Z]\\].*" ) ) {
                             String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );
 
                             char left = s.charAt(0);
                             char right = s.charAt(2);
-                            System.out.println( s + " " + left + " " + " " + right );
+                            // System.out.println( s + " " + left + " " + " " + right );
 
                             tokens.add( lparen );
                             for ( ; left <= right; left++ ) {
-                                System.out.println( left );
+                                // System.out.println( left );
                                 tokens.add( new TokenChar( left, tChar, TokenCharKind.CHAR ) );
                                 if ( left != right ) {
                                     tokens.add( union );
@@ -203,28 +204,7 @@ public class RegexParser {
                             }
                             tokens.add( rparen );
                             tokens.add( concat );
-                            System.out.println( tokens );
-
-                            i += s.length() + 1; // + 1 for [ ]
-
-                        } else if ( regex.substring(i).matches( "^\\[[A-Z]-[A-Z]\\].*" ) ) {
-                            String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );
-
-                            char left = s.charAt(0);
-                            char right = s.charAt(2);
-                            System.out.println( s + " " + left + " " + " " + right );
-
-                            tokens.add( lparen );
-                            for ( ; left <= right; left++ ) {
-                                System.out.println( left );
-                                tokens.add( new TokenChar( left, tChar, TokenCharKind.CHAR ) );
-                                if ( left != right ) {
-                                    tokens.add( union );
-                                }
-                            }
-                            tokens.add( rparen );
-                            tokens.add( concat );
-                            System.out.println( tokens );
+                            // System.out.println( tokens );
 
                             i += s.length() + 1; // + 1 for [ ]
 
