@@ -186,6 +186,48 @@ public class RegexParser {
                             i += s.length() + 1; // + 1 for [ ]
 
                             // System.exit(-1);
+                        } else if ( regex.substring(i).matches( "^\\[[a-z]-[a-z]\\].*" ) ) {
+                            String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );
+
+                            char left = s.charAt(0);
+                            char right = s.charAt(2);
+                            System.out.println( s + " " + left + " " + " " + right );
+
+                            tokens.add( lparen );
+                            for ( ; left <= right; left++ ) {
+                                System.out.println( left );
+                                tokens.add( new TokenChar( left, tChar, TokenCharKind.CHAR ) );
+                                if ( left != right ) {
+                                    tokens.add( union );
+                                }
+                            }
+                            tokens.add( rparen );
+                            tokens.add( concat );
+                            System.out.println( tokens );
+
+                            i += s.length() + 1; // + 1 for [ ]
+
+                        } else if ( regex.substring(i).matches( "^\\[[A-Z]-[A-Z]\\].*" ) ) {
+                            String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );
+
+                            char left = s.charAt(0);
+                            char right = s.charAt(2);
+                            System.out.println( s + " " + left + " " + " " + right );
+
+                            tokens.add( lparen );
+                            for ( ; left <= right; left++ ) {
+                                System.out.println( left );
+                                tokens.add( new TokenChar( left, tChar, TokenCharKind.CHAR ) );
+                                if ( left != right ) {
+                                    tokens.add( union );
+                                }
+                            }
+                            tokens.add( rparen );
+                            tokens.add( concat );
+                            System.out.println( tokens );
+
+                            i += s.length() + 1; // + 1 for [ ]
+
                         } else {
                             tokens.add( lbracket );
                             addConcatToken = false;
