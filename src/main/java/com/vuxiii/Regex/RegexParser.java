@@ -114,6 +114,8 @@ public class RegexParser {
         TokenRParen rparen = new TokenRParen( tRParen );
         TokenLCurl lcurl = new TokenLCurl( tLCurl );
         TokenRCurl rcurl = new TokenRCurl( tRCurl );
+        TokenLBracket lbracket = new TokenLBracket( tLBracket );
+        TokenRBracket rbracket = new TokenRBracket( tRBracket );
         TokenRegOperator union = new TokenRegOperator( tUnion );
         TokenRegStar star = new TokenRegStar( tStar );
         TokenRegDash dash = new TokenRegDash( tDash );
@@ -128,6 +130,10 @@ public class RegexParser {
             // System.out.println( "at char: " + c);
             switch (c) {
                 case '(':{
+                    if ( addConcatToken ) {
+                        tokens.add( concat );
+                        addConcatToken = false;
+                    }
                     tokens.add( lparen );
                     addConcatToken = false;
                 } break;
@@ -141,6 +147,53 @@ public class RegexParser {
                 } break;
                 case '}':{
                     tokens.add( rcurl );
+                    addConcatToken = true;
+                } break;
+                case '[':{
+                    if ( addConcatToken ) {
+                        tokens.add( concat );
+                        addConcatToken = false;
+                    }
+                    if ( regex.substring(i).startsWith("[:digit:]") ) {
+                        tokens.add( new TokenChar( tChar, TokenCharKind.DIGIT ) );
+                        addConcatToken = true;
+                        i += "[:digit:]".length(); // -1?
+                    
+                    } else if ( regex.substring(i).startsWith("[:alpha:]") ) {
+                        tokens.add( new TokenChar( tChar, TokenCharKind.ALPHA ) );
+                        addConcatToken = true;
+                        i += "[:alpha:]".length(); // -1?
+                    } else {
+                        if ( regex.substring(i).matches( "^\\[\\d*-\\d*\\].*" ) ) {
+                            String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );
+
+                            int left = Integer.valueOf( s.substring(0, s.indexOf("-") ) );
+                            int right = Integer.valueOf( s.substring( s.indexOf("-")+1 ) );
+                            System.out.println( s + " " + left + " " + " " + right );
+
+                            tokens.add( lparen );
+                            for ( ; left <= right; left++ ) {
+                                System.out.println( left );
+                                tokens.add( new TokenRegDigit( left, tDigit ) );
+                                if ( left != right ) {
+                                    tokens.add( union );
+                                }
+                            }
+                            tokens.add( rparen );
+                            tokens.add( concat );
+                            System.out.println( tokens );
+
+                            i += s.length() + 1; // + 1 for [ ]
+
+                            // System.exit(-1);
+                        } else {
+                            tokens.add( lbracket );
+                            addConcatToken = false;
+                        }
+                    }
+                } break;
+                case ']':{
+                    tokens.add( rbracket );
                     addConcatToken = true;
                 } break;
                 case '|':{
@@ -158,21 +211,6 @@ public class RegexParser {
                     // }
                     tokens.add( dash );
                     addConcatToken = false;
-                } break;
-                case '[':{ // Check for fancy stuff like [:digit:], [:alpha:]
-                    if ( addConcatToken ) {
-                        tokens.add( concat );
-                        addConcatToken = false;
-                    }
-                    if ( regex.substring(i).startsWith("[:digit:]") ) {
-                        tokens.add( new TokenChar( tChar, TokenCharKind.DIGIT ) );
-                        i += "[:digit:]".length(); // -1?
-                    
-                    } else if ( regex.substring(i).startsWith("[:alpha:]") ) {
-                        tokens.add( new TokenChar( tChar, TokenCharKind.ALPHA ) );
-                        i += "[:alpha:]".length(); // -1?
-                    }
-                    addConcatToken = true;
                 } break;
                 case '.': {
                     // System.out.println( "FOUND WILD" );
@@ -192,19 +230,11 @@ public class RegexParser {
                         tokens.add( concat );
                         addConcatToken = false;
                     }
-                    // if ( Character.isDigit(c) ) { // Also check for negative numbers (maybe?)
-                    //     int end = i;
-                    //     char otherC = regex.charAt(end);
-                    //     while ( Character.isDigit( otherC ) ) {
-                    //         end++;
-                    //         if ( end == regex.length() ) break;
-                    //         otherC = regex.charAt(end);
-                    //     }
-                    //     tokens.add( new TokenRegDigit( Integer.parseInt( regex.substring( i, end ) ), tNumber ) );
-                    //     i = --end;
-                    // } else {
+                    if ( Character.isDigit(c) ) { // Also check for negative numbers (maybe?)
+                        tokens.add( new TokenRegDigit( Integer.valueOf( ""+ c ), tDigit ) );
+                    } else {
                         tokens.add( new TokenChar( c, tChar, TokenCharKind.CHAR ) );
-                    // }
+                    }
                     addConcatToken = true;
                     
                 } break;
@@ -304,6 +334,13 @@ public class RegexParser {
             return new TokenRegExp( token, nExp );
         } );
 
+        // g.addRuleWithReduceFunction( nExp, List.of( nRange ), (tokens) -> {
+        
+        //     TokenRegRange token = (TokenRegRange) tokens.get(0);
+        //     return new TokenRegExp( token, nExp );
+            
+        // } );
+
         g.addRuleWithReduceFunction( nUnion, List.of( nConcat, tUnion, nUnion ), (tokens) -> {
             TokenRegConcat left = (TokenRegConcat) tokens.get(0);
             TokenRegUnion right = (TokenRegUnion) tokens.get(2);
@@ -315,6 +352,13 @@ public class RegexParser {
             TokenRegConcat token = (TokenRegConcat) tokens.get(0);
             return new TokenRegUnion( token, nUnion );
         } );
+        
+        // g.addRuleWithReduceFunction( nUnion, List.of( nRange, nUnion ), (tokens) -> {
+        
+        //     TokenRegRange token = (TokenRegRange) tokens.get(0);
+        //     return new TokenRegUdtryk( token, nUdtryk ); // Change to union...
+            
+        // } );
 
         g.addRuleWithReduceFunction( nConcat, List.of( nUdtryk, tConcat, nConcat ), (tokens) -> {
             TokenRegUdtryk left = (TokenRegUdtryk) tokens.get(0);
@@ -339,6 +383,21 @@ public class RegexParser {
             return new TokenRegUdtryk( token, nUdtryk );
         } );
 
+        // g.addRuleWithReduceFunction( nUdtryk, List.of( nRange ), (tokens) -> {
+        
+        //     TokenRegRange token = (TokenRegRange) tokens.get(0);
+        //     return new TokenRegUdtryk( token, nUdtryk );
+            
+        // } );
+
+        // g.addRuleWithReduceFunction( nUdtryk, List.of( nRange, tConcat, nSymbol ), (tokens) -> {
+        
+        //     TokenRegRange range = (TokenRegRange) tokens.get(0); 
+        //     TokenRegUdtryk udt = (TokenRegUdtryk) tokens.get(2); 
+        //     return new TokenRegUdtryk( range, nUdtryk );
+            
+        // } );
+
         g.addRuleWithReduceFunction( nRepetition, List.of( nStar ), (tokens) -> {
             TokenRegStar token = (TokenRegStar) tokens.get(0);
             return new TokenRegRepetition( token, nRepetition );
@@ -353,14 +412,14 @@ public class RegexParser {
             return new TokenRegRepetition( lcurl, token, rcurl, nRepetition );
         } );
 
-        g.addRuleWithReduceFunction( nRange, List.of( nIntRange ), (tokens) -> {
-            TokenRegIntRange digits = (TokenRegIntRange) tokens.get(0);
+        g.addRuleWithReduceFunction( nRange, List.of( tLBracket, nIntRange, tRBracket ), (tokens) -> {
+            TokenRegIntRange digits = (TokenRegIntRange) tokens.get(1);
 
             return new TokenRegRange( digits, TokenRangeKind.INT, nRange );
         } );
 
-        g.addRuleWithReduceFunction( nRange, List.of( nCharRange ), (tokens) -> {
-            TokenRegCharRange digits = (TokenRegCharRange) tokens.get(0);
+        g.addRuleWithReduceFunction( nRange, List.of( tLBracket, nCharRange, tRBracket ), (tokens) -> {
+            TokenRegCharRange digits = (TokenRegCharRange) tokens.get(1);
             
             return new TokenRegRange( digits, TokenRangeKind.CHAR, nRange );
         } );
@@ -378,28 +437,20 @@ public class RegexParser {
             return new TokenRegIntRange(left, right, nIntRange);
         } );
 
-        g.addRuleWithReduceFunction( nIntNumber, List.of( tChar ), (tokens) -> {
-            TokenChar digit1 = (TokenChar) tokens.get(0);
-            if ( !Character.isDigit( digit1.value ) ) {
-                System.out.println( "Parsing error. Expected number, got " + digit1.value );
-                System.exit(-1);
-            }
-            // TokenRegDash dash = (TokenRegDash) tokens.get(1);
-            // TokenChar digit2 = (TokenChar) tokens.get(2);
+        g.addRuleWithReduceFunction( nIntNumber, List.of( tDigit ), (tokens) -> {
+            TokenRegDigit digit1 = (TokenRegDigit) tokens.get(0);
+            
             return new TokenRegIntNumber( Integer.valueOf( digit1.value + "" ), nIntNumber );
         } );
 
-        g.addRuleWithReduceFunction( nIntNumber, List.of( tChar, tConcat, nIntNumber ), (tokens) -> {
-            TokenChar digit1 = (TokenChar) tokens.get(0);
-            if ( !Character.isDigit( digit1.value ) ) {
-                System.out.println( "Parsing error. Expected number, got " + digit1.value );
-                System.exit(-1);
-            }
+        g.addRuleWithReduceFunction( nIntNumber, List.of( tDigit, tConcat, nIntNumber ), (tokens) -> {
+            TokenRegDigit digit1 = (TokenRegDigit) tokens.get(0);
+            
             TokenRegIntNumber digit2 = (TokenRegIntNumber) tokens.get(2);
 
-            char leftValue = digit1.value;
-            int rightValue = digit2.value;
-            int value = Integer.valueOf( leftValue + ("" + rightValue) );
+            String leftValue = "" + digit1.value;
+            String rightValue = "" + digit2.value;
+            int value = Integer.valueOf( leftValue + rightValue );
 
             return new TokenRegIntNumber( value, nIntNumber );
         } );
@@ -450,12 +501,19 @@ public class RegexParser {
             
         } );
 
-        g.addRuleWithReduceFunction( nSymbol, List.of( tNumber ), (tokens) -> {
+        g.addRuleWithReduceFunction( nSymbol, List.of( tDigit ), (tokens) -> {
         
-            TokenRegIntNumber token = (TokenRegIntNumber) tokens.get(0);
+            TokenRegDigit token = (TokenRegDigit) tokens.get(0);
             return new TokenRegSymbol( token, nSymbol );
             
         } );
+
+        // g.addRuleWithReduceFunction( nSymbol, List.of( nRange ), (tokens) -> {
+        
+        //     TokenRegRange token = (TokenRegRange) tokens.get(0);
+        //     return new TokenRegSymbol( token, nSymbol );
+            
+        // } );
 
         // g.addRuleWithReduceFunction( nSymbol, List.of( tWild ), (tokens) -> {
         //     TokenRegWild token = (TokenRegWild) tokens.get(0);

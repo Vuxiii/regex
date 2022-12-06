@@ -5,6 +5,8 @@ public class TokenRegExp implements Token {
 
     public final Term nonTerminal;
     public final TokenRegUnion left;
+
+    public final TokenRegRange range;
     // public final Token right;
 
     // public TokenRegExp( TokenRegUnion left, Token right, Term nonTerminal )  {
@@ -15,9 +17,16 @@ public class TokenRegExp implements Token {
 
     public TokenRegExp( TokenRegUnion token, Term nonTerminal )  {
         this.left = token;
-        // this.right = null;
+        range = null;
         this.nonTerminal = nonTerminal;
     }
+
+
+    // public TokenRegExp( TokenRegRange token, Term nonTerminal )  {
+    //     this.left = null;
+    //     range = token;
+    //     this.nonTerminal = nonTerminal;
+    // }
 
 
     @Override
@@ -26,8 +35,8 @@ public class TokenRegExp implements Token {
     }
     
     public String toString() {
-        // if ( right == null )
-        //     return "[Exp -> " + left.toString() + "]";
+        // if ( range == null )
+        //     return "[Exp -> " + range.toString() + "]";
         return "[Exp -> " + left.toString() + "]";
     }
 

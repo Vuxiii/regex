@@ -92,6 +92,39 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
             nfaStack.push( state );
             addFinish( state, end );
 
+        } else if ( token instanceof TokenRegDigit ) {
+            NFA<T> state = new NFA<>();;
+            NFA<T> end = state.registerWord( ((TokenRegDigit)token).value + "", true );
+            nfaStack.push( state );
+            addFinish( state, end );
+        }
+    }
+
+    public void postVisit_udtryk( Token token ) {
+        if ( token instanceof TokenRegUdtryk ) {
+            // System.out.println( "Implement me" );
+            TokenRegUdtryk _token = (TokenRegUdtryk) token;
+            if ( _token.rep == null ) return;
+
+            System.out.println( _token.value );
+
+            if ( ((TokenRegRange)_token.value).kind == TokenRangeKind.INT ) {
+                 
+                System.out.println( "int range" );
+
+
+
+                System.exit(-1);
+            } else if ( ((TokenRegRange)_token.value).kind == TokenRangeKind.CHAR ) {
+
+                System.out.println( "char range" );
+                System.exit(-1);
+            } else {
+                System.out.println( "Failure in udtryk with ranges" );
+                System.exit(-1);
+            }
+
+            
         }
     }
 
@@ -155,10 +188,10 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
 
                 NFA<T> concat = new NFA<>();
 
-                concat.addEdge(left);
+                concat.addEdge( EdgeKind.EPSILON, left );
                 for ( NFA<T> leftFinish : NFA.collectFinals( left ) ) {
                     // System.out.println( "finish.....");
-                    leftFinish.addEdge(right);
+                    leftFinish.addEdge( EdgeKind.EPSILON, right);
                     leftFinish.isFinal = false;
                 }
 
@@ -170,7 +203,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                 nfaStack.push( concat );
 
                 // System.out.println("concat".repeat(5));
-                // System.out.println( NFA_state.getStringRepresentation( concat ) );
+                // System.out.println( NFA.getStringRepresentation( concat ) );
                 // System.out.println("concat".repeat(5));
 
             }
@@ -189,11 +222,13 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                 NFA<T> right = nfaStack.pop();
                 NFA<T> left = nfaStack.pop();
 
-                NFA<T> union = new NFA<>();
+                NFA<T> union = new NFA<>( "union" );
                 union.addEdge( left );
                 union.addEdge( right );
                 nfaStack.push( union );
 
+                System.out.println( NFA.getStringRepresentation(union));
+                System.out.println( NFA.collectFinals( union ));
                 for ( NFA<T> newFinish : NFA.collectFinals( left ) ) {
                     addFinish( union, newFinish );
                 }
@@ -202,8 +237,11 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                     addFinish( union, newFinish );
                 }
 
-                clearFinish( left );
-                clearFinish( right );
+
+                System.out.println( NFA.getStringRepresentation(union));
+
+                // clearFinish( left );
+                // clearFinish( right );
 
             }
         }
@@ -250,7 +288,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                 }
                 repeat( nfaStack.pop(), reps );
             } else {
-                
+                // System.out.println( nfaStack );
                 // TokenRegIntRange range = (TokenRegIntRange) _token.range;
                 NFA<T> stateToRepeat = nfaStack.pop();
                 int reps = range.right.value - range.left.value;
@@ -297,9 +335,9 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
             // TokenRoot _token = (TokenRoot) token;
             // Convert to dfa. or not.
             NFA<T> tok = nfaStack.pop();
-            // System.out.println( "root***************" );
-            // System.out.println( NFA_state.getStringRepresentation(tok) );
-            // System.out.println( "root***************" );
+            System.out.println( "root***************" );
+            System.out.println( NFA.getStringRepresentation(tok) );
+            System.out.println( "root***************" );
             // System.out.println( nfaStack.size() );
             // result = NFA_state.toDFA( tok );
             result = tok;

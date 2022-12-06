@@ -16,7 +16,7 @@ import com.vuxiii.Regex.Token.Token;
 import com.vuxiii.Utils.*;
 
 public class ParsingStep {
-    
+    public static boolean showSteps = false;
     public static int count = 0;
     private int id;
 
@@ -79,23 +79,24 @@ public class ParsingStep {
 
         Token element = inputPeek();
 
-        // Utils.log( "We are currently in state: " + currentState.current_state.id );
-        // Utils.log( "We are currently in state: " + table.states.get( currentState.current_state.id ).current_state.id );
-        // System.out.println( currentState.equals(table.states.get( currentState.current_state.id )));
-        // System.out.println( currentState == table.states.get( currentState.current_state.id ));
-
-        // System.out.println( currentState );
-        // System.out.println( table.states.get( currentState.current_state.id ));
-
         
+        // if ( showSteps )
+        //     System.out.println( currentState );
+        // if ( showSteps )
+        //     System.out.println( table.states.get( currentState.current_state.id ));
+
+        if ( showSteps )
+            System.out.println( this );
 
         // Utils.log( element + " -> term: " + element.getTerm() );
 
         ParseAction action = table.getAction( currentState.current_state.id, element.getTerm() );
-        // Utils.log( action );
+        if ( showSteps )
+            Utils.log( action );
 
         if ( action instanceof ParseShift ) {
-            // Utils.log( "In Shift" );
+            if ( showSteps )
+                Utils.log( "In Shift" );
             ParseShift act = (ParseShift) action;
             // Utils.log( "id: " + act.id() );
             ParsingStep nextStep = new ParsingStep( input, tempInput, stack, reduceStack, table );
