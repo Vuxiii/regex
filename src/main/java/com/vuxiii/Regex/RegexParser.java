@@ -227,12 +227,12 @@ public class RegexParser {
                     addConcatToken = true;
                 } break;
                 case '-':{
-                    // if ( addConcatToken ) {
-                    //     tokens.add( concat );
-                    //     addConcatToken = false;
-                    // }
+                    if ( addConcatToken ) {
+                        tokens.add( concat );
+                        addConcatToken = false;
+                    }
                     tokens.add( dash );
-                    addConcatToken = false;
+                    addConcatToken = true;
                 } break;
                 case '.': {
                     // System.out.println( "FOUND WILD" );
@@ -252,7 +252,7 @@ public class RegexParser {
                         tokens.add( concat );
                         addConcatToken = false;
                     }
-                    if ( Character.isDigit(c) ) { // Also check for negative numbers (maybe?)
+                    if ( Character.isDigit(c) ) { 
                         tokens.add( new TokenRegDigit( Integer.valueOf( ""+ c ), tDigit ) );
                     } else {
                         tokens.add( new TokenChar( c, tChar, TokenCharKind.CHAR ) );
@@ -452,9 +452,9 @@ public class RegexParser {
             return new TokenRegIntRange(left, nIntRange);
         } );
 
-        g.addRuleWithReduceFunction( nIntRange, List.of( nIntNumber, tDash, nIntNumber ), (tokens) -> {
+        g.addRuleWithReduceFunction( nIntRange, List.of( nIntNumber, tConcat, tDash, tConcat, nIntNumber ), (tokens) -> {
             TokenRegIntNumber left = (TokenRegIntNumber) tokens.get(0);
-            TokenRegIntNumber right = (TokenRegIntNumber) tokens.get(2);
+            TokenRegIntNumber right = (TokenRegIntNumber) tokens.get(4);
             
             return new TokenRegIntRange(left, right, nIntRange);
         } );
@@ -486,10 +486,10 @@ public class RegexParser {
             return new TokenRegCharRange( token, nCharRange );
         } );
 
-        g.addRuleWithReduceFunction( nCharRange, List.of( tChar, tDash, tChar ), (tokens) -> {
+        g.addRuleWithReduceFunction( nCharRange, List.of( tChar, tConcat, tDash, tConcat, tChar ), (tokens) -> {
             TokenChar left = (TokenChar) tokens.get(0);
             
-            TokenChar right = (TokenChar) tokens.get(2);
+            TokenChar right = (TokenChar) tokens.get(4);
             if ( !Character.isLetter( left.value ) ) {
                 System.out.println( "Parsing error. Expected letter, got " + left.value );
                 System.exit(-1);

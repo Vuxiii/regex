@@ -106,9 +106,9 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
             TokenRegUdtryk _token = (TokenRegUdtryk) token;
             if ( _token.rep == null ) return;
 
-            System.out.println( _token.value );
+            System.out.println( "ØØØØØØØ" + _token.rep );
 
-            if ( ((TokenRegRange)_token.value).kind == TokenRangeKind.INT ) {
+            if ( ((TokenRegRange)_token.value).kind == TokenRangeKind.INT ) { // Checkmig lige.
                  
                 System.out.println( "int range" );
 
@@ -227,8 +227,8 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                 union.addEdge( right );
                 nfaStack.push( union );
 
-                System.out.println( NFA.getStringRepresentation(union));
-                System.out.println( NFA.collectFinals( union ));
+                // System.out.println( NFA.getStringRepresentation(union));
+                // System.out.println( NFA.collectFinals( union ));
                 for ( NFA<T> newFinish : NFA.collectFinals( left ) ) {
                     addFinish( union, newFinish );
                 }
@@ -238,7 +238,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
                 }
 
 
-                System.out.println( NFA.getStringRepresentation(union));
+                // System.out.println( NFA.getStringRepresentation(union));
 
                 // clearFinish( left );
                 // clearFinish( right );

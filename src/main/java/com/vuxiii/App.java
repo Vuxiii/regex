@@ -18,12 +18,12 @@ public class App {
         ParsingStep.showSteps = false;
         // regex.match( "Hej me ig :)daad" );
      
-        // regex = new Regex<>( ".*", (id) -> new TokenAlphs( id ) );
+        regex = new Regex<>( ".*", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "01{1-4}5", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]b", (id) -> new TokenAlphs( id ) );
-        regex.addRegex( "t[A-F]b", (id) -> new TokenAlphs( id ) );
+        // regex.addRegex( "t[A-F]b", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "a(1|2|3)b", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "a|b", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "0[:digit:]", (id) -> new TokenAlphs( id ) );
