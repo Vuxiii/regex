@@ -1,0 +1,1 @@
+remove the range from the rules. We don't need it. I have already done it in the 'converting to tokens' step in RegexParser.java
