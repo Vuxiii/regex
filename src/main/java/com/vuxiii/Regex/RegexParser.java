@@ -157,12 +157,12 @@ public class RegexParser {
                     if ( regex.substring(i).startsWith("[:digit:]") ) {
                         tokens.add( new TokenChar( tChar, TokenCharKind.DIGIT ) );
                         addConcatToken = true;
-                        i += "[:digit:]".length(); // -1?
+                        i += "[:digit:]".length() - 1; // -1?
                     
                     } else if ( regex.substring(i).startsWith("[:alpha:]") ) {
                         tokens.add( new TokenChar( tChar, TokenCharKind.ALPHA ) );
                         addConcatToken = true;
-                        i += "[:alpha:]".length(); // -1?
+                        i += "[:alpha:]".length() - 1; // -1?
                     } else {
                         if ( regex.substring(i).matches( "^\\[\\d*-\\d*\\].*" ) ) {
                             String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );

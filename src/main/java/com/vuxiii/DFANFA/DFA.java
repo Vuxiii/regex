@@ -68,6 +68,8 @@ public class DFA<T> implements NameInterface {
     }
 
     public DFA<T> consume( char c ) {
+        // First we need to go through the stds.
+        // Then we can check for DIGIT, ALPH and ANY. (In order of precedence)
         Edge<DFA<T>> acceptEdge = null;
         for ( Edge<DFA<T>> e : out ) {
             if ( e.canConsume( c )  ) {

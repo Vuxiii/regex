@@ -1,5 +1,6 @@
-package com.vuxiii.Regex.Token;
+package com.vuxiii;
 import com.vuxiii.LR.Records.Term;
+import com.vuxiii.Regex.Token.Token;
 import com.vuxiii.Visitor.*;
 
 public class TokenAlphs implements Token {

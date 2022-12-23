@@ -6,7 +6,6 @@ import com.vuxiii.DFANFA.DFA;
 import com.vuxiii.LR.ParsingStep;
 import com.vuxiii.Regex.Regex;
 import com.vuxiii.Regex.Token.Token;
-import com.vuxiii.Regex.Token.TokenAlphs;
 
 public class App {
     public static void main( String[] args ) {
@@ -18,8 +17,11 @@ public class App {
         ParsingStep.showSteps = false;
         // regex.match( "Hej me ig :)daad" );
      
-        regex = new Regex<>( ".*", (id) -> new TokenAlphs( id ) );
-        // regex.addRegex( "01{1-4}5", (id) -> new TokenAlphs( id ) );
+        regex = new Regex<>( "=", (id) -> new TokenAssignment( id ) );
+        regex.addRegex( "int", (type) -> new TokenIntType( type ) );
+        regex.addRegex( "[:digit:]*", (intVal) -> new TokenInt( intVal ) );
+        regex.addRegex( ".*", (id) -> new TokenAlphs( id ) );
+        // regex.addRegex( "( |\n)*", (rm) -> new TokenAlphs( "Ignore" ) ); 
         // regex.addRegex( "[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]b", (id) -> new TokenAlphs( id ) );
@@ -36,7 +38,7 @@ public class App {
         System.out.println(DFA.<Token>getStringRepresentation( regex.dfa ));
 
         System.out.println("asd");
-        List<Token> tokens = regex.match( "int i = 2;" );
+        List<Token> tokens = regex.match( "int i = 2" );
 
         for ( Token t : tokens ) {
             System.out.println( t.toString() );

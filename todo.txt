@@ -1,1 +1,30 @@
-remove the range from the rules. We don't need it. I have already done it in the 'converting to tokens' step in RegexParser.java
+Bug in DFA and NFA
+
+    If a state with an ANY edge and any other edge (q), we need to go through q and do stuff from there.
+    It is two different ways of reaching the same destination
+
+    If we can accept abe and .*
+
+        a -a> b
+        a -ANY> c
+        b -b> e
+        e -e> d
+        c ->ANY>c
+
+    We need to add edges to b, e and d with an ANY-edge to c. Like this
+    
+        a -a>       b
+        a -ANY>     c
+        b -b>       e
+        b -ANY>     c
+        e -e>       d
+        e -ANY>     c
+        c ->ANY>    c
+        d ->ANY>    c
+
+    We also need to add the precedence when consuming chars in the states.
+        1) Normals
+        2) DIGIT & ALPH
+        3) ANY
+
+Add unit tests. Things break all the  time...

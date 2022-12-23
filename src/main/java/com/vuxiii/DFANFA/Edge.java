@@ -42,7 +42,7 @@ public class Edge<StateType extends NameInterface> {
     } 
 
     public String toString() {
-        return "Edge " + from.name() + " -" + ( kind == EdgeKind.ANY ? "any" 
+        return "Edge " + from.name() + " -" + (   kind == EdgeKind.ANY ? "any" 
                                                 : kind == EdgeKind.EPSILON ? "epsilon" 
                                                 : kind == EdgeKind.ALPHS ? "alphs"
                                                 : kind == EdgeKind.DIGITS ? "digits"

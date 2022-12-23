@@ -3,6 +3,7 @@
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/LR/Records/LRRuleIdentifier.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/DFANFA/Edge.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/DFANFA/NameInterface.java
+/home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/TokenIntType.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/LR/Records/ParserStateError.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenOperator.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenCharKind.java
@@ -41,6 +42,8 @@
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRangeKind.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/LR/ParsingStep.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRegSymbol.java
+/home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/TokenInt.java
+/home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/TokenAlphs.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenLBracket.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenLParen.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRegIntRange.java
@@ -49,9 +52,9 @@
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Regex.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/DFANFA/EdgeKind.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Visitor/VisitorAcceptor.java
+/home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/TokenAssignment.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/LR/Records/ParseAccept.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/LR/Records/NonTerminal.java
-/home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenAlphs.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/App.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/Regex/Token/TokenRBracket.java
 /home/william/Desktop/sdu/5sem/DM565_Formelle_sprog_og_data/regex/src/main/java/com/vuxiii/DFANFA/NFA.java

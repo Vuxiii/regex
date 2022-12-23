@@ -217,6 +217,8 @@ public class NFA<T> implements NameInterface {
             // Map<Edge<NFA_state<T>>, Set<NFA_state<T>>> reachable = new HashMap<>();
             Map<Character, Set<NFA<T>>> reachable = new HashMap<>();
             Set<NFA<T>> anyReachable = new HashSet<>();
+            Set<NFA<T>> digitReachable = new HashSet<>();
+            Set<NFA<T>> alphReachable = new HashSet<>();
             // Map<Wrapper<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
 
             // Add all the edges reachable from this "combined" state
@@ -229,6 +231,10 @@ public class NFA<T> implements NameInterface {
                     if ( edge.kind == EdgeKind.ANY ) {
                         // Add to all nodes in the alfabet
                         anyReachable.add( edge.to );
+                    } else if ( edge.kind == EdgeKind.ALPHS ) {
+                        alphReachable.add( edge.to );
+                    }  else if ( edge.kind == EdgeKind.DIGITS ) {
+                        digitReachable.add( edge.to );
                     } else if ( !reachable.containsKey( edge.accept ) ) {
                         Set<NFA<T>> s = new HashSet<>();
                         s.add( edge.to );
@@ -267,6 +273,8 @@ public class NFA<T> implements NameInterface {
                 current.addEdge( c, newState ); 
             }
 
+            // Refactor the reachables.... Duplicate code
+
             if ( anyReachable.size() > 0 ) {
                 DFA<T> newState;
                 if ( cachedStates.containsKey( anyReachable ) ) {
@@ -282,6 +290,40 @@ public class NFA<T> implements NameInterface {
                 // System.out.println( "New State: " + newState.name );
                 // Add the edge to it.
                 current.addEdge( EdgeKind.ANY, newState ); 
+            }
+
+            if ( alphReachable.size() > 0 ) {
+                DFA<T> newState;
+                if ( cachedStates.containsKey( alphReachable ) ) {
+                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                    newState = cachedStates.get( alphReachable );
+                }  else {
+                    newState = new DFA<T>( genNameFromStates( alphReachable ) );
+                    cachedStates.put( alphReachable, newState );
+                    DFAToNFA.put( newState, alphReachable );
+                    // System.out.println( "Creating new State: " + newState.name );
+                    queue.add( newState ); // Might need to move this outside of this clause.
+                }
+                // System.out.println( "New State: " + newState.name );
+                // Add the edge to it.
+                current.addEdge( EdgeKind.ALPHS, newState ); 
+            }
+
+            if ( digitReachable.size() > 0 ) {
+                DFA<T> newState;
+                if ( cachedStates.containsKey( digitReachable ) ) {
+                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                    newState = cachedStates.get( digitReachable );
+                }  else {
+                    newState = new DFA<T>( genNameFromStates( digitReachable ) );
+                    cachedStates.put( digitReachable, newState );
+                    DFAToNFA.put( newState, digitReachable );
+                    // System.out.println( "Creating new State: " + newState.name );
+                    queue.add( newState ); // Might need to move this outside of this clause.
+                }
+                // System.out.println( "New State: " + newState.name );
+                // Add the edge to it.
+                current.addEdge( EdgeKind.DIGITS, newState ); 
             }
             
 
