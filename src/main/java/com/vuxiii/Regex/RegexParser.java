@@ -434,17 +434,17 @@ public class RegexParser {
             return new TokenRegRepetition( lcurl, token, rcurl, nRepetition );
         } );
 
-        g.addRuleWithReduceFunction( nRange, List.of( tLBracket, nIntRange, tRBracket ), (tokens) -> {
-            TokenRegIntRange digits = (TokenRegIntRange) tokens.get(1);
+        // g.addRuleWithReduceFunction( nRange, List.of( tLBracket, nIntRange, tRBracket ), (tokens) -> {
+        //     TokenRegIntRange digits = (TokenRegIntRange) tokens.get(1);
 
-            return new TokenRegRange( digits, TokenRangeKind.INT, nRange );
-        } );
+        //     return new TokenRegRange( digits, TokenRangeKind.INT, nRange );
+        // } );
 
-        g.addRuleWithReduceFunction( nRange, List.of( tLBracket, nCharRange, tRBracket ), (tokens) -> {
-            TokenRegCharRange digits = (TokenRegCharRange) tokens.get(1);
+        // g.addRuleWithReduceFunction( nRange, List.of( tLBracket, nCharRange, tRBracket ), (tokens) -> {
+        //     TokenRegCharRange digits = (TokenRegCharRange) tokens.get(1);
             
-            return new TokenRegRange( digits, TokenRangeKind.CHAR, nRange );
-        } );
+        //     return new TokenRegRange( digits, TokenRangeKind.CHAR, nRange );
+        // } );
 
         g.addRuleWithReduceFunction( nIntRange, List.of( nIntNumber ), (tokens) -> {
             TokenRegIntNumber left = (TokenRegIntNumber) tokens.get(0);

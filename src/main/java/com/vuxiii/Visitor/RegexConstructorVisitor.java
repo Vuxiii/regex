@@ -100,33 +100,6 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         }
     }
 
-    public void postVisit_udtryk( Token token ) {
-        if ( token instanceof TokenRegUdtryk ) {
-            // System.out.println( "Implement me" );
-            TokenRegUdtryk _token = (TokenRegUdtryk) token;
-            if ( _token.rep == null ) return;
-
-            System.out.println( "ØØØØØØØ" + _token.rep );
-
-            if ( ((TokenRegRange)_token.value).kind == TokenRangeKind.INT ) { // Checkmig lige.
-                 
-                System.out.println( "int range" );
-
-
-
-                System.exit(-1);
-            } else if ( ((TokenRegRange)_token.value).kind == TokenRangeKind.CHAR ) {
-
-                System.out.println( "char range" );
-                System.exit(-1);
-            } else {
-                System.out.println( "Failure in udtryk with ranges" );
-                System.exit(-1);
-            }
-
-            
-        }
-    }
 
     public void postVisit_star( Token token ) {
         if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
