@@ -282,69 +282,40 @@ public class NFA<T> implements NameInterface {
                 for ( Edge<NFA<T>> edge : state.out ) {
                     if ( edge.kind != EdgeKind.STD ) continue;
                     
-                    // System.out.println( "\t" + edge );
-                    // System.out.println( "\tAdding " + anyReachable
-                    //                                     .parallelStream()
-                    //                                     .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                    //                                     .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                    //                                     .collect( Collectors.toSet() ) );
                     if ( !reachable.containsKey( edge.accept ) ) {
                         Set<NFA<T>> s = new HashSet<>();
-                        s.add( edge.to );
-                        s.addAll( extractToStates(anyReachable
-                                                        .parallelStream()
-                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                                                        .collect( Collectors.toSet() ) ) );
-                        if ( Character.isDigit( edge.accept ) ) {
-                            s.addAll( extractToStates(digitReachable
-                                                        .parallelStream()
-                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                                                        .collect( Collectors.toSet() ) ) );
-                        } else if ( Character.isLetter( edge.accept ) ) {
-                            s.addAll( extractToStates(alphReachable
-                                                        .parallelStream()
-                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                                                        .collect( Collectors.toSet() ) ) );
-                        }
                         reachable.put( edge.accept, s );
-                    } else {
-                        reachable.get( edge.accept ).add( edge.to );
-                        reachable.get( edge.accept ).addAll( extractToStates(anyReachable
-                                                        .parallelStream()
-                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                                                        .collect( Collectors.toSet() ) ) );
-                        if ( Character.isDigit( edge.accept ) ) {
-                            reachable.get( edge.accept ).addAll( extractToStates(digitReachable
-                                                        .parallelStream()
-                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                                                        .collect( Collectors.toSet() ) ) );
-                        } else if ( Character.isLetter( edge.accept ) ) {
-                            reachable.get( edge.accept ).addAll( extractToStates(alphReachable
-                                                        .parallelStream()
-                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
-                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
-                                                        .collect( Collectors.toSet() ) ) );
-                        }
+                    } 
+                    // Add the STD
+                    reachable.get( edge.accept ).add( edge.to );
+
+                    // ADd the ANY
+                    reachable.get( edge.accept ).addAll( extractToStates(anyReachable
+                                                    .parallelStream()
+                                                    .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                    .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                    .collect( Collectors.toSet() ) ) );
+
+                    // Add the DIGITS
+                    if ( Character.isDigit( edge.accept ) ) {
+                        reachable.get( edge.accept ).addAll( extractToStates(digitReachable
+                                                    .parallelStream()
+                                                    .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                    .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                    .collect( Collectors.toSet() ) ) );
+                    } // Add the ALPHS 
+                    else if ( Character.isLetter( edge.accept ) ) {
+                        reachable.get( edge.accept ).addAll( extractToStates(alphReachable
+                                                    .parallelStream()
+                                                    .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                    .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                    .collect( Collectors.toSet() ) ) );
                     }
                 }
-                // System.out.print( "\t\tCan go to -> " );
-                // reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
-                // System.out.println();
             }
-            // for ( Character c : reachable.keySet() ) {
-            //     System.out.println( c + " -> " + genNameFromStates( reachable.get( c ) ) ); 
-            // }
-            // System.out.println( "reachable: " + (reachable.values()) );
 
-            // System.out.println( "any reachable: " + (anyReachable) );
-            // System.out.println( "digit reachable: " + (digitReachable) );
-            // System.out.println( "alph reachable: " + (alphReachable) );
 
+            // Might not be needed. Check me. 26/12/2022
             for ( Edge<NFA<T>> edge : anyReachable ) {
                 NFA<T> from = edge.from;
                 
@@ -359,21 +330,6 @@ public class NFA<T> implements NameInterface {
                     }
                 }
             } 
-
-            // System.out.println( "any reachable: " + (anyReachable) );
-
-            // System.out.println( reachable );
-
-            // Step 1: Start with the ANY reachable
-            //      If there is an any state, we can skip the next steps
-            // Step 2: Are there any DIGIT reachable
-            //      If there exists any 'digit' edges, we can ignore them in the STD step
-            // Step 3: Are there any ALPH reachable
-            //      If there exists any 'alph' edges, we can ignore them in the STD step
-            // Step 4: Are there any STD reachable
-            //      Simply add the edges to the 'to' states
-
-
 
 
             // Create all the reachable states.
@@ -414,10 +370,6 @@ public class NFA<T> implements NameInterface {
 
             DFAToNFA.put( current, closure ); // :0
 
-            // System.out.println( "Closure:\n" + closure.toString() );
-
-            // System.out.println( "ASDASDASD " + current.name );
-
         } while ( queue.size() > 0 );
 
         // System.out.println( "---------------------**********************'" );
@@ -436,7 +388,7 @@ public class NFA<T> implements NameInterface {
                     // System.out.println( nfa.name );
                     // System.out.println( dfa.name );
                     dfa.isFinal = true;
-                    dfa.constructor = nfa.constructor;
+                    dfa.constructor = nfa.constructor; // LOGIC BUG IN THIS LINE (NEED TO FIGURE OUT WHICH OF THE NFAS TO COPY FROM)
                     System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
                     break;
                 }
