@@ -8,10 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.vuxiii.Utils.*;;
 
 public class NFA<T> implements NameInterface {
+    private boolean hasAnyEdge = false;
+    private boolean hasDigitEdge = false;
+    private boolean hasAlphEdge = false;
+    private boolean hasEpsEdge = false;
+    
     public String name;
     
     public boolean isFinal = false;
@@ -56,10 +62,19 @@ public class NFA<T> implements NameInterface {
     }
 
     public boolean hasEpsilonEdge() {
-        for ( Edge<NFA<T>> e : out ) 
-            if ( e.kind == EdgeKind.EPSILON )
-                return true;
-        return false;
+        return hasEpsEdge;
+    }
+
+    public boolean hasAnyEdge() {
+        return hasAnyEdge;
+    }
+
+    public boolean hasDigitEdge() {
+        return hasDigitEdge;
+    }
+
+    public boolean hasAlphEdge() {
+        return hasAlphEdge;
     }
 
     public NFA<T> registerWord( String s ) {
@@ -122,6 +137,15 @@ public class NFA<T> implements NameInterface {
      */
     public void addEdge( EdgeKind kind, NFA<T> to ) {
         // Utils.log( "Adding edge " + name + " -" + c + "> " + to.name() );
+        if ( kind == EdgeKind.ALPHS )
+            hasAlphEdge = true;
+        else if ( kind == EdgeKind.DIGITS )
+            hasDigitEdge = true;
+        else if ( kind == EdgeKind.ANY )
+            hasAnyEdge = true;
+        else if ( kind == EdgeKind.EPSILON )
+            hasEpsEdge = true;
+
         Edge<NFA<T>> e = new Edge<>( kind );
         e.from = this;
         e.to = to;
@@ -137,6 +161,8 @@ public class NFA<T> implements NameInterface {
      */
     public void addEdge( NFA<T> to ) {
         // Utils.log( "Adding edge " + name + " -epsilon1> " + to.name() );
+
+        hasEpsEdge = true;
 
         Edge<NFA<T>> e = new Edge<>( EdgeKind.EPSILON );
         e.from = this;
@@ -179,20 +205,33 @@ public class NFA<T> implements NameInterface {
 
         return list;
     }
+    
+    private static <T> Set<NFA<T>> extractToStates( Set<Edge<NFA<T>>> edges ) {
+        Set<NFA<T>> nfas = new HashSet<>();
 
-    // private static record Wrapper<T>( Edge<NFA_state<T>> edge, boolean isAny ) {
-
-    //     public boolean equals( Object other ) {
-    //         if ( other == null ) return false;
-    //         if ( !(other instanceof NFA_edge ) ) return false;
-    //         NFA_edge<?> o = (NFA_edge<?>) other;
-    //         if ( edge.isEpsilon != o.isEpsilon ) return false;
-    //         if ( edge.acceptAny || o.acceptAny ) return true; // :0
-    //         if ( edge.accept != o.accept ) return false;
-            
-    //         return true;
-    //     }
-    // }
+        for ( Edge<NFA<T>> edge : edges ) 
+            nfas.add( edge.to );
+        return nfas;
+    }
+    
+    private static <T> void addStates( Map<Set<NFA<T>>, DFA<T>> cachedStates, Map<DFA<T>, Set<NFA<T>>> DFAToNFA, LinkedList<DFA<T>> queue, DFA<T> current, Set<NFA<T>> nfas, EdgeKind kind ) {
+        if ( nfas.size() > 0 ) {
+            DFA<T> newState;
+            if ( cachedStates.containsKey( nfas ) ) {
+                // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                newState = cachedStates.get( nfas );
+            }  else {
+                newState = new DFA<T>( genNameFromStates( nfas ) );
+                cachedStates.put( nfas, newState );
+                DFAToNFA.put( newState, nfas );
+                // System.out.println( "Creating new State: " + newState.name );
+                queue.add( newState ); // Might need to move this outside of this clause.
+            }
+            // System.out.println( "New State: " + newState.name );
+            // Add the edge to it.
+            current.addEdge( kind, newState ); 
+        }
+    }
 
     public static <T> DFA<T> toDFA( NFA<T> begin ) {
 
@@ -214,44 +253,132 @@ public class NFA<T> implements NameInterface {
             DFA<T> current = queue.pop();
             // System.out.println( "Visiting DFA " + current.name );
             
-            // Map<Edge<NFA_state<T>>, Set<NFA_state<T>>> reachable = new HashMap<>();
             Map<Character, Set<NFA<T>>> reachable = new HashMap<>();
-            Set<NFA<T>> anyReachable = new HashSet<>();
-            Set<NFA<T>> digitReachable = new HashSet<>();
-            Set<NFA<T>> alphReachable = new HashSet<>();
-            // Map<Wrapper<T>, Set<NFA_state<T>>> reachable = new HashMap<>();
+            Set<Edge<NFA<T>>> anyReachable = new HashSet<>();
+            Set<Edge<NFA<T>>> digitReachable = new HashSet<>();
+            Set<Edge<NFA<T>>> alphReachable = new HashSet<>();
 
-            // Add all the edges reachable from this "combined" state
+            // System.out.println( "Current state " + name );
+
             for ( NFA<T> state : closure ) {
                 // System.out.println( "At NFA: " + state.name );
                 for ( Edge<NFA<T>> edge : state.out ) {
-                    if ( edge.kind == EdgeKind.EPSILON ) continue;
+                    if ( edge.kind == EdgeKind.EPSILON || edge.kind == EdgeKind.STD ) continue;
                     
-                    // System.out.println( "\tChecking edge: " + edge );
                     if ( edge.kind == EdgeKind.ANY ) {
-                        // Add to all nodes in the alfabet
-                        anyReachable.add( edge.to );
+                        anyReachable.add( edge );
                     } else if ( edge.kind == EdgeKind.ALPHS ) {
-                        alphReachable.add( edge.to );
+                        alphReachable.add( edge );
                     }  else if ( edge.kind == EdgeKind.DIGITS ) {
-                        digitReachable.add( edge.to );
-                    } else if ( !reachable.containsKey( edge.accept ) ) {
+                        digitReachable.add( edge );
+                    } 
+                }
+            }
+
+
+            // Find all the edges reachable from this "combined" state
+            for ( NFA<T> state : closure ) {
+                // System.out.println( "At NFA: " + state.name );
+                for ( Edge<NFA<T>> edge : state.out ) {
+                    if ( edge.kind != EdgeKind.STD ) continue;
+                    
+                    // System.out.println( "\t" + edge );
+                    // System.out.println( "\tAdding " + anyReachable
+                    //                                     .parallelStream()
+                    //                                     .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                    //                                     .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                    //                                     .collect( Collectors.toSet() ) );
+                    if ( !reachable.containsKey( edge.accept ) ) {
                         Set<NFA<T>> s = new HashSet<>();
                         s.add( edge.to );
+                        s.addAll( extractToStates(anyReachable
+                                                        .parallelStream()
+                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                        .collect( Collectors.toSet() ) ) );
+                        if ( Character.isDigit( edge.accept ) ) {
+                            s.addAll( extractToStates(digitReachable
+                                                        .parallelStream()
+                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                        .collect( Collectors.toSet() ) ) );
+                        } else if ( Character.isLetter( edge.accept ) ) {
+                            s.addAll( extractToStates(alphReachable
+                                                        .parallelStream()
+                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                        .collect( Collectors.toSet() ) ) );
+                        }
                         reachable.put( edge.accept, s );
                     } else {
                         reachable.get( edge.accept ).add( edge.to );
+                        reachable.get( edge.accept ).addAll( extractToStates(anyReachable
+                                                        .parallelStream()
+                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                        .collect( Collectors.toSet() ) ) );
+                        if ( Character.isDigit( edge.accept ) ) {
+                            reachable.get( edge.accept ).addAll( extractToStates(digitReachable
+                                                        .parallelStream()
+                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                        .collect( Collectors.toSet() ) ) );
+                        } else if ( Character.isLetter( edge.accept ) ) {
+                            reachable.get( edge.accept ).addAll( extractToStates(alphReachable
+                                                        .parallelStream()
+                                                        .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
+                                                        .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
+                                                        .collect( Collectors.toSet() ) ) );
+                        }
                     }
                 }
                 // System.out.print( "\t\tCan go to -> " );
                 // reachable.values().forEach( c -> c.forEach( (s) -> System.out.print( s.name + ", " ) ) );
                 // System.out.println();
             }
+            // for ( Character c : reachable.keySet() ) {
+            //     System.out.println( c + " -> " + genNameFromStates( reachable.get( c ) ) ); 
+            // }
+            // System.out.println( "reachable: " + (reachable.values()) );
+
+            // System.out.println( "any reachable: " + (anyReachable) );
+            // System.out.println( "digit reachable: " + (digitReachable) );
+            // System.out.println( "alph reachable: " + (alphReachable) );
+
+            for ( Edge<NFA<T>> edge : anyReachable ) {
+                NFA<T> from = edge.from;
+                
+                for ( char c : reachable.keySet() ) {
+                    for ( NFA<T> st : reachable.get(c) ) {
+                        if ( from.name.equals( st.name ) ) {
+                            // System.out.println( "Found " + st.name );
+
+                            reachable.get(c).add( edge.to );
+                            // anyReachable.remove( edge ); // Might bug out.
+                        }
+                    }
+                }
+            } 
+
+            // System.out.println( "any reachable: " + (anyReachable) );
 
             // System.out.println( reachable );
 
-            // Create all these states.
+            // Step 1: Start with the ANY reachable
+            //      If there is an any state, we can skip the next steps
+            // Step 2: Are there any DIGIT reachable
+            //      If there exists any 'digit' edges, we can ignore them in the STD step
+            // Step 3: Are there any ALPH reachable
+            //      If there exists any 'alph' edges, we can ignore them in the STD step
+            // Step 4: Are there any STD reachable
+            //      Simply add the edges to the 'to' states
+
+
+
+
+            // Create all the reachable states.
             for ( Character c : reachable.keySet() ) {
+                
                 // System.out.println( "At charachter: " + c);
                 Set<NFA<T>> NFAStates = reachable.get( c );
                 // System.out.println( NFAStates );
@@ -265,7 +392,7 @@ public class NFA<T> implements NameInterface {
                     cachedStates.put( NFAStates, newState );
                     DFAToNFA.put( newState, NFAStates );
                     // System.out.println( "Creating new State: " + newState.name );
-                    queue.add( newState ); // Might need to move this outside of this clause.
+                    queue.add( newState );
                 }
                 // System.out.println( "New State: " + newState.name );
 
@@ -273,59 +400,9 @@ public class NFA<T> implements NameInterface {
                 current.addEdge( c, newState ); 
             }
 
-            // Refactor the reachables.... Duplicate code
-
-            if ( anyReachable.size() > 0 ) {
-                DFA<T> newState;
-                if ( cachedStates.containsKey( anyReachable ) ) {
-                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
-                    newState = cachedStates.get( anyReachable );
-                }  else {
-                    newState = new DFA<T>( genNameFromStates( anyReachable ) );
-                    cachedStates.put( anyReachable, newState );
-                    DFAToNFA.put( newState, anyReachable );
-                    // System.out.println( "Creating new State: " + newState.name );
-                    queue.add( newState ); // Might need to move this outside of this clause.
-                }
-                // System.out.println( "New State: " + newState.name );
-                // Add the edge to it.
-                current.addEdge( EdgeKind.ANY, newState ); 
-            }
-
-            if ( alphReachable.size() > 0 ) {
-                DFA<T> newState;
-                if ( cachedStates.containsKey( alphReachable ) ) {
-                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
-                    newState = cachedStates.get( alphReachable );
-                }  else {
-                    newState = new DFA<T>( genNameFromStates( alphReachable ) );
-                    cachedStates.put( alphReachable, newState );
-                    DFAToNFA.put( newState, alphReachable );
-                    // System.out.println( "Creating new State: " + newState.name );
-                    queue.add( newState ); // Might need to move this outside of this clause.
-                }
-                // System.out.println( "New State: " + newState.name );
-                // Add the edge to it.
-                current.addEdge( EdgeKind.ALPHS, newState ); 
-            }
-
-            if ( digitReachable.size() > 0 ) {
-                DFA<T> newState;
-                if ( cachedStates.containsKey( digitReachable ) ) {
-                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
-                    newState = cachedStates.get( digitReachable );
-                }  else {
-                    newState = new DFA<T>( genNameFromStates( digitReachable ) );
-                    cachedStates.put( digitReachable, newState );
-                    DFAToNFA.put( newState, digitReachable );
-                    // System.out.println( "Creating new State: " + newState.name );
-                    queue.add( newState ); // Might need to move this outside of this clause.
-                }
-                // System.out.println( "New State: " + newState.name );
-                // Add the edge to it.
-                current.addEdge( EdgeKind.DIGITS, newState ); 
-            }
-            
+            addStates( cachedStates, DFAToNFA, queue, current, extractToStates( anyReachable ), EdgeKind.ANY );
+            addStates( cachedStates, DFAToNFA, queue, current, extractToStates( alphReachable ), EdgeKind.ALPHS );
+            addStates( cachedStates, DFAToNFA, queue, current, extractToStates( digitReachable ), EdgeKind.DIGITS );
 
 
             // System.out.println( "Queue:" );
@@ -360,7 +437,7 @@ public class NFA<T> implements NameInterface {
                     // System.out.println( dfa.name );
                     dfa.isFinal = true;
                     dfa.constructor = nfa.constructor;
-                    // System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
+                    System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
                     break;
                 }
             }

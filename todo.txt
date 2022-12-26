@@ -1,30 +1,12 @@
-Bug in DFA and NFA
+The correct functions aren't passed correctly from NFA to their DFA counterpart.
+    I will be needing a fix for this.
+        * Maybe I could make the "walk" and choose that one.
+            accept: "int" and ".*"
 
-    If a state with an ANY edge and any other edge (q), we need to go through q and do stuff from there.
-    It is two different ways of reaching the same destination
+            If I start with i -> n -> t then it should choose this function.
+                However, if I do anything other than this, the other function is chosen.
 
-    If we can accept abe and .*
-
-        a -a> b
-        a -ANY> c
-        b -b> e
-        e -e> d
-        c ->ANY>c
-
-    We need to add edges to b, e and d with an ANY-edge to c. Like this
-    
-        a -a>       b
-        a -ANY>     c
-        b -b>       e
-        b -ANY>     c
-        e -e>       d
-        e -ANY>     c
-        c ->ANY>    c
-        d ->ANY>    c
-
-    We also need to add the precedence when consuming chars in the states.
-        1) Normals
-        2) DIGIT & ALPH
-        3) ANY
-
+            Longest name match?
+            Priority?
+            
 Add unit tests. Things break all the  time...
