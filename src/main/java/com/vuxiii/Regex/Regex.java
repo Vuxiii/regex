@@ -22,7 +22,12 @@ public class Regex<T> {
     }
 
     public Regex( String regex, Function<String, T> constructor ) { 
-        addRegex( regex, constructor );
+        addRegex( regex, constructor, 0 );
+        // this.constructor = constructor;
+    }
+
+    public Regex( String regex, Function<String, T> constructor, int priority ) { 
+        addRegex( regex, constructor, priority );
         // this.constructor = constructor;
     }
 
@@ -38,8 +43,16 @@ public class Regex<T> {
 
 
 
+    public void addRegex( String regex, Function<String, T> constructor, int priority ) { // Convert the regex to NFA and add it to the internal NFA
+        NFA<T> n = RegexParser.compileRegex( regex, constructor, priority );
+        nfa.addEdge( n ); // add edge to DFA!!!!
+        // System.out.println( "-".repeat(10) );
+        // System.out.println( NFA_state.getStringRepresentation(n) );
+        // System.out.println( "-".repeat(10) );
+    }
+
     public void addRegex( String regex, Function<String, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
-        NFA<T> n = RegexParser.compileRegex( regex, constructor );
+        NFA<T> n = RegexParser.compileRegex( regex, constructor, 0 );
         nfa.addEdge( n ); // add edge to DFA!!!!
         // System.out.println( "-".repeat(10) );
         // System.out.println( NFA_state.getStringRepresentation(n) );
@@ -78,7 +91,7 @@ public class Regex<T> {
                 end = i;
                 if ( foundMatch ) {
                     if ( current.isFinal ) {
-                        System.out.println( "Match -> " + line.substring(start, end) );
+                        // System.out.println( "Match -> " + line.substring(start, end) );
                         output.add( current.constructor.apply( line.substring(start, end) ) ); // TODO: CHANGE ME
                     }else
                         System.out.println( "Match not finished -> " + line.substring(start, end) );

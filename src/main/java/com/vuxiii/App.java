@@ -52,9 +52,10 @@ public class App {
      
         regex = new Regex<>( "=", (id) -> new TokenAssignment( id ) );
         regex.addRegex( "int", (type) -> new TokenIntType( type ) );
-        regex.addRegex( ".*", (id) -> new TokenAlphs( id ) );
-        regex.addRegex( ";", (intVal) -> new TokenAlphs( "END " + intVal ) );
+        regex.addRegex( "for", (intVal) -> new TokenFor( intVal ) );
         regex.addRegex( "[:digit:][:digit:]*", (intVal) -> new TokenInt( intVal ) );
+        regex.addRegex( ";", (intVal) -> new TokenAlphs( "END " + intVal ) );
+        regex.addRegex( "[:alpha:].*", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "( |\n)*", (rm) -> new TokenAlphs( "Ignore" ) ); 
         // regex.addRegex( "[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]", (id) -> new TokenAlphs( id ) );
@@ -69,10 +70,10 @@ public class App {
         // regex = new Regex( "." );
         regex.compile();
 
-        System.out.println(DFA.<Token>getStringRepresentation( regex.dfa ));
+        System.out.println(DFA.getStringRepresentation( regex.dfa ));
 
-        System.out.println("asd");
-        List<Token> tokens = regex.match( "int i = 42;" );
+        // System.out.println("asd");
+        List<Token> tokens = regex.match( "for int i = 42;" );
 
         for ( Token t : tokens ) {
             System.out.println( t.toString() );

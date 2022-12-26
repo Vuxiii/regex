@@ -61,7 +61,7 @@ public class RegexParser {
 
     // private static DFA_state regexDFA;
 
-    public static<T> NFA<T> compileRegex( String regex, Function<String, T> constructor ) { 
+    public static<T> NFA<T> compileRegex( String regex, Function<String, T> constructor, int prio ) { 
         if ( firstSetup )
             setup();
         firstSetup = false;
@@ -82,7 +82,7 @@ public class RegexParser {
         // System.out.println( DFA_state.getStringRepresentation( reg.result ) );
 
         NFA<T> nfa = reg.result;
-        NFA.collectFinals(nfa).forEach( n -> n.constructor = constructor );;
+        NFA.collectFinals(nfa).forEach( n -> {n.num = prio; n.constructor = constructor;} );
         // nfa.constructor = constructor;
         // Return the result.
         return nfa;

@@ -19,7 +19,9 @@ public class NFA<T> implements NameInterface {
     private boolean hasEpsEdge = false;
     
     public String name;
-    
+
+    public int num;
+
     public boolean isFinal = false;
 
     List<Edge<NFA<T>>> out;
@@ -37,11 +39,12 @@ public class NFA<T> implements NameInterface {
     }
 
     public NFA( String name, boolean isFinal ) {
+        this.num = Integer.MAX_VALUE;
         this.name = name + (c++);
         this.isFinal = isFinal;
         out = new ArrayList<>();
         in = new ArrayList<>();
-
+        
         // Utils.log( "-".repeat(10));
         
     }
@@ -380,19 +383,35 @@ public class NFA<T> implements NameInterface {
         //     nfa.forEach( n -> System.out.println( "\tNFA: " + n.name + " " + n.isFinal ));
         // });
         // System.out.println( "Setting finish states for DFA" );
+
+
+        // FInd a better solution.
+
         for ( DFA<T> dfa : DFAToNFA.keySet() ) {
+            int lowest = Integer.MAX_VALUE;
+            NFA<T> lowestNFA = null;
             // System.out.println( "checking DFA state" + dfa.name );
             for ( NFA<T> nfa : DFAToNFA.get( dfa ) ) {
+                
                 if ( nfa.isFinal ) {
                     // System.out.println( "FOUND FINAL" );
                     // System.out.println( nfa.name );
                     // System.out.println( dfa.name );
                     dfa.isFinal = true;
-                    dfa.constructor = nfa.constructor; // LOGIC BUG IN THIS LINE (NEED TO FIGURE OUT WHICH OF THE NFAS TO COPY FROM)
-                    System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
-                    break;
+                    // dfa.constructor = nfa.constructor; // LOGIC BUG IN THIS LINE (NEED TO FIGURE OUT WHICH OF THE NFAS TO COPY FROM)
+                    // System.out.println( "Constructor for " + dfa.name() + ": " + dfa.constructor );
+                    if ( nfa.num <= lowest ) {
+                        lowest = nfa.num;
+                        lowestNFA = nfa;
+                    }
+                    // break;
                 }
             }
+            if ( dfa.isFinal ) {
+                dfa.constructor = lowestNFA.constructor; // LOGIC BUG IN THIS LINE (NEED TO FIGURE OUT WHICH OF THE NFAS TO COPY FROM)
+                System.out.println( "DFA: " + dfa.name + " -> " + dfa.constructor.apply("") );
+            }
+
         }
         // System.out.println( "END finish states for DFA" );
 

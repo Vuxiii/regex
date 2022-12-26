@@ -142,7 +142,11 @@ public class DFA<T> implements NameInterface {
         List<DFA<T>> states = DFA.collectStates( nfa );
         for ( DFA<T> state : states ) {
             s += ( "State " + state.name() + "\n" );
-            s += ( "\tisFinal = " + state.isFinal() + "\n" );
+            s += ( "\tisFinal = " + state.isFinal() );
+            if ( state.isFinal() )
+                s += " () -> " + state.constructor + "\n";
+            else
+                s += "\n";
             s += ( "\tout edges:" + "\n" );
             for ( Edge<DFA<T>> e : state.out() ) {
                 s += ( "\t\t[" + (e.kind == EdgeKind.STD ? e.accept() : e.kind ) + " -> State " + e.to().name() + "]" + "\n" );

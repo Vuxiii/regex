@@ -308,9 +308,9 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
             // TokenRoot _token = (TokenRoot) token;
             // Convert to dfa. or not.
             NFA<T> tok = nfaStack.pop();
-            System.out.println( "root***************" );
-            System.out.println( NFA.getStringRepresentation(tok) );
-            System.out.println( "root***************" );
+            // System.out.println( "root***************" );
+            // System.out.println( NFA.getStringRepresentation(tok) );
+            // System.out.println( "root***************" );
             // System.out.println( nfaStack.size() );
             // result = NFA_state.toDFA( tok );
             result = tok;
