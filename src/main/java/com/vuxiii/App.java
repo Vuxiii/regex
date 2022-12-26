@@ -43,7 +43,7 @@ public class App {
 
     public static void regexSample() {
         Regex<Token> regex = new Regex<>();
-        // regex = new Regex( "(a|bc)*d" );
+        // regex = new Regex<>( "( |\t|\n)", (id) -> new TokenAlphs(id) );
         // regex.compile();
 
 
@@ -73,7 +73,7 @@ public class App {
         System.out.println(DFA.getStringRepresentation( regex.dfa ));
 
         // System.out.println("asd");
-        List<Token> tokens = regex.match( "for int i = 42;" );
+        List<Token> tokens = regex.match( "for int i =\t 42;\n" );
 
         for ( Token t : tokens ) {
             System.out.println( t.toString() );
