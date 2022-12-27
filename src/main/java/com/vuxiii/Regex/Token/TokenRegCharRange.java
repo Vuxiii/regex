@@ -2,7 +2,8 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegCharRange implements Token, RegRepetition, TokenOperator {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegCharRange implements ASTToken, RegRepetition, TokenOperator {
 
     public final Term nonTerminal;
 

@@ -8,7 +8,8 @@ import com.vuxiii.DFANFA.EdgeKind;
 import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.ParsingStep;
 import com.vuxiii.Regex.Regex;
-import com.vuxiii.Regex.Token.Token;
+import com.vuxiii.LR.Records.ASTToken;
+
 
 public class App {
     public static void main( String[] args ) {
@@ -42,7 +43,7 @@ public class App {
     }
 
     public static void regexSample() {
-        Regex<Token> regex = new Regex<>();
+        Regex<ASTToken> regex = new Regex<>();
         // regex = new Regex<>( "( |\t|\n)", (id) -> new TokenAlphs(id) );
         // regex.compile();
 
@@ -55,7 +56,7 @@ public class App {
         regex.addRegex( "for", (intVal) -> new TokenFor( intVal ) );
         regex.addRegex( "[:digit:][:digit:]*", (intVal) -> new TokenInt( intVal ) );
         regex.addRegex( ";", (intVal) -> new TokenAlphs( "END " + intVal ) );
-        regex.addRegex( "[:alpha:].*", (id) -> new TokenAlphs( id ) );
+        regex.addRegex( "[:alpha:].*", (id) -> new TokenAlphs( id ), 999999999 );
         // regex.addRegex( "( |\n)*", (rm) -> new TokenAlphs( "Ignore" ) ); 
         // regex.addRegex( "[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]", (id) -> new TokenAlphs( id ) );
@@ -73,16 +74,16 @@ public class App {
         System.out.println(DFA.getStringRepresentation( regex.dfa ));
 
         // System.out.println("asd");
-        List<Token> tokens = regex.match( "for int i =\t 42;\n" );
+        List<ASTToken> tokens = regex.match( "for int i = 42;" );
 
-        for ( Token t : tokens ) {
+        for ( ASTToken t : tokens ) {
             System.out.println( t.toString() );
         }
 
     }
 
     public static void sample() {
-        NFA<Token> start = new NFA<>();
+        NFA<ASTToken> start = new NFA<>();
         start.registerWord( "Hej" );
         start.registerWord( "Abe" );
         start.registerWord( "Juhl" );
@@ -93,7 +94,7 @@ public class App {
 
         System.out.println( "=".repeat(60) );
         
-        DFA<Token> dfa = NFA.toDFA( start );
+        DFA<ASTToken> dfa = NFA.toDFA( start );
 
         System.out.println( DFA.getStringRepresentation( dfa ) );
 
@@ -101,13 +102,13 @@ public class App {
     }
 
     public static void nfafix() {
-        NFA<Token> start = new NFA<>();
+        NFA<ASTToken> start = new NFA<>();
         
         // NFA<Token> abe = new NFA<>( "abeStart" );
         
-        NFA<Token> other = new NFA<>();
-        NFA<Token> other7 = new NFA<>();
-        NFA<Token> other8 = new NFA<>();
+        NFA<ASTToken> other = new NFA<>();
+        NFA<ASTToken> other7 = new NFA<>();
+        NFA<ASTToken> other8 = new NFA<>();
         other.addEdge( EdgeKind.ANY, other7 );
         other7.addEdge( EdgeKind.ANY, other8 );
 
@@ -121,7 +122,7 @@ public class App {
 
         System.out.println( "=".repeat(60) );
         
-        DFA<Token> dfa = NFA.toDFA( start );
+        DFA<ASTToken> dfa = NFA.toDFA( start );
 
         System.out.println( DFA.getStringRepresentation( dfa ) );
 

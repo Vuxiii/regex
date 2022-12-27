@@ -10,6 +10,7 @@ import com.vuxiii.DFANFA.EdgeKind;
 import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.Regex.Token.*;
 import com.vuxiii.Utils.Utils;
+import com.vuxiii.LR.Records.ASTToken;
 
 public class RegexConstructorVisitor<T> extends VisitorBase {
     
@@ -56,7 +57,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         return finalStates.getOrDefault( state.name, Utils.toSet() );
     }
 
-    public void visit_leaf( Token token ) {
+    public void visit_leaf( ASTToken token ) {
 
         if ( token instanceof TokenChar ) {
             NFA<T> state = null;
@@ -101,7 +102,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
     }
 
 
-    public void postVisit_star( Token token ) {
+    public void postVisit_star( ASTToken token ) {
         if ( token instanceof TokenRegRepetition ) { // Needs expansion when more repetitions are added
             // System.out.println( "tokenRep************************'" );
             TokenRegRepetition _token = (TokenRegRepetition) token;
@@ -145,7 +146,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         }
     }
 
-    public void postVisit_concat( Token token ) {
+    public void postVisit_concat( ASTToken token ) {
         if ( token instanceof TokenRegConcat ) {
             // System.out.println( "tokenConcat" );
             TokenRegConcat _token = (TokenRegConcat) token;
@@ -183,7 +184,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         }
     }
 
-    public void postVisit_union( Token token ) {
+    public void postVisit_union( ASTToken token ) {
         if ( token instanceof TokenRegUnion ) {
             // System.out.println( "tokenUnion" );
             TokenRegUnion _token = (TokenRegUnion) token;
@@ -246,7 +247,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         addFinish( nfaStack.peek(), anchor );
     }
 
-    public void postVisit_IntRange( Token token ) {
+    public void postVisit_IntRange( ASTToken token ) {
         if ( token instanceof TokenRegIntRange ) {
             // System.exit(-1);
             // System.out.println( "TokenRegRange" );
@@ -301,7 +302,7 @@ public class RegexConstructorVisitor<T> extends VisitorBase {
         } 
     }
 
-    public void postVisit_root( Token token ) {
+    public void postVisit_root( ASTToken token ) {
         // System.out.println( nfaStack.size() );
         if ( token instanceof TokenRoot ) {
             // System.out.println( "tokenRoot" );

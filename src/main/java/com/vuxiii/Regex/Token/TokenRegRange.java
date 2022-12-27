@@ -2,15 +2,16 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegRange implements Token, RegRepetition, TokenOperator {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegRange implements ASTToken, RegRepetition, TokenOperator {
 
     public final Term nonTerminal;
 
-    public final Token range;
+    public final ASTToken range;
 
     public final TokenRangeKind kind;
 
-    public TokenRegRange( Token range, TokenRangeKind kind, Term nonTerminal ) {
+    public TokenRegRange( ASTToken range, TokenRangeKind kind, Term nonTerminal ) {
         this.range = range;
         this.nonTerminal = nonTerminal;
         this.kind = kind;

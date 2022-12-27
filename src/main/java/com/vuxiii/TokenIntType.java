@@ -1,9 +1,10 @@
 package com.vuxiii;
 import com.vuxiii.LR.Records.Term;
-import com.vuxiii.Regex.Token.Token;
+import com.vuxiii.LR.Records.ASTToken;
+
 import com.vuxiii.Visitor.*;
 
-public class TokenIntType implements Token {
+public class TokenIntType implements ASTToken {
 
     public final String value;
 

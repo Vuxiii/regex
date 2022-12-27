@@ -2,7 +2,8 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegRepetition implements Token {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegRepetition implements ASTToken {
 
     public final Term nonTerminal;
     public final RegRepetition value;

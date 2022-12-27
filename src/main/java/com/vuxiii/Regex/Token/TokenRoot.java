@@ -2,13 +2,14 @@ package com.vuxiii.Regex.Token;
 import com.vuxiii.LR.Records.NonTerminal;
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRoot implements Token {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRoot implements ASTToken {
 
     public final Term term;
-    public final Token finish;
+    public final ASTToken finish;
     public final TokenEOP eop;
 
-    public TokenRoot( Token finish, TokenEOP eop, NonTerminal nS ) {
+    public TokenRoot( ASTToken finish, TokenEOP eop, NonTerminal nS ) {
         this.term = nS;
         this.finish = finish;
         this.eop = eop;

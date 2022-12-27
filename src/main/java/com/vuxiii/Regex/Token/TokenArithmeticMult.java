@@ -1,8 +1,9 @@
 package com.vuxiii.Regex.Token;
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
+import com.vuxiii.LR.Records.ASTToken;
 
-public class TokenArithmeticMult implements Token {
+public class TokenArithmeticMult implements ASTToken {
 
     public final TokenArithmeticToken left;
     public final TokenArithmeticMult right;

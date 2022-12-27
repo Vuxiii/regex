@@ -1,18 +1,19 @@
 package com.vuxiii.Regex.Token;
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegSymbol implements Token {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegSymbol implements ASTToken {
 
     // public final TokenRegRepetition rep;
 
     public final Term nonTerminal;
-    public final Token value;
+    public final ASTToken value;
     // public final boolean isEps;
 
     public final TokenLParen lparen;
     public final TokenRParen rparen;
     // public final TokenRegExp exp;
-    public TokenRegSymbol( Token value, Term nonTerminal ) {
+    public TokenRegSymbol( ASTToken value, Term nonTerminal ) {
         this.value = value;
         this.nonTerminal = nonTerminal;
         // isEps = false;

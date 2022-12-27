@@ -2,7 +2,8 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegUnion implements Token {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegUnion implements ASTToken {
 
     public final Term nonTerminal;
     public final TokenRegConcat left;

@@ -2,19 +2,20 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegUdtryk implements Token {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegUdtryk implements ASTToken {
 
     public final TokenRegRepetition rep;
     public final Term nonTerminal;
-    public final Token value;
+    public final ASTToken value;
 
-    public TokenRegUdtryk( Token value, Term nonTerminal ) {
+    public TokenRegUdtryk( ASTToken value, Term nonTerminal ) {
         this.value = value;
         this.nonTerminal = nonTerminal;
         rep = null;
     }
 
-    public TokenRegUdtryk( Token value, TokenRegRepetition right, Term nonTerminal) {
+    public TokenRegUdtryk( ASTToken value, TokenRegRepetition right, Term nonTerminal) {
         this.value = value;
         this.nonTerminal = nonTerminal;
         this.rep = right;

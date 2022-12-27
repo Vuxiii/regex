@@ -1,11 +1,11 @@
 package com.vuxiii.Visitor;
 
-import com.vuxiii.Regex.Token.Token;
+import com.vuxiii.LR.Records.ASTToken;
 
 public class LeafVisitor extends VisitorBase {
     
 
-    public void visit_( Token t ) {
+    public void visit_( ASTToken t ) {
         System.out.print( t );
     }
     // public void preVisit_( Token t ) {

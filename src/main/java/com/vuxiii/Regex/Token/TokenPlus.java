@@ -1,7 +1,8 @@
 package com.vuxiii.Regex.Token;
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenPlus implements Token, TokenOperator {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenPlus implements ASTToken, TokenOperator {
     public final Term term;
 
     public TokenPlus( Term term ) {

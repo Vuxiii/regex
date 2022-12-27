@@ -2,16 +2,17 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
+import com.vuxiii.LR.Records.ASTToken;
 
-public class TokenArithmeticToken implements Token {
+public class TokenArithmeticToken implements ASTToken {
 
-    public final Token value;
+    public final ASTToken value;
     public final TokenLParen lparen;
     public final TokenRParen rparen;
     public final Term term;
 
     public TokenArithmeticToken( TokenNumber val, Term term ) {
-        value = (Token) val;
+        value = (ASTToken) val;
         lparen = null;
         rparen = null;
         this.term = term;

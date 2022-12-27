@@ -14,6 +14,7 @@ import com.vuxiii.LR.Records.LRRule;
 import com.vuxiii.LR.Records.NonTerminal;
 import com.vuxiii.LR.Records.ParserState;
 import com.vuxiii.LR.Records.Terminal;
+import com.vuxiii.LR.Records.ASTToken;
 import com.vuxiii.Regex.Token.*;
 import com.vuxiii.Utils.Utils;
 import com.vuxiii.Visitor.LeafVisitor;
@@ -67,12 +68,12 @@ public class RegexParser {
         firstSetup = false;
 
         // Convert the input into tokens...
-        LinkedList<Token> tokens = convertInputToTokens( regex );
+        LinkedList<ASTToken> tokens = convertInputToTokens( regex );
 
 
         // Parse the AST.
 
-        Token AST = getAST( tokens ); // parse step
+        ASTToken AST = getAST( tokens ); // parse step
 
         // Parse AST.
 
@@ -90,7 +91,7 @@ public class RegexParser {
         // return null;
     }
 
-    private static Token getAST( List<Token> tokens ) {
+    private static ASTToken getAST( List<com.vuxiii.LR.Records.ASTToken> tokens ) {
         List<ParserState> stack = new LinkedList<>();
         stack.add( table.getStartState() );
         ParsingStep currentStep = new ParsingStep(tokens, new LinkedList<>(), stack, new LinkedList<>(), table );
@@ -100,15 +101,15 @@ public class RegexParser {
             currentStep = currentStep.step();
         }
         // System.out.println( currentStep );
-        Token AST = currentStep.getResult();
+        ASTToken AST = currentStep.getResult();
 
         System.out.println( "Final result is: " + AST );
         return AST;
     }
 
-    private static LinkedList<Token> convertInputToTokens( String regex ) {
+    private static LinkedList<ASTToken> convertInputToTokens( String regex ) {
 
-        LinkedList<Token> tokens = new LinkedList<>();
+        LinkedList<ASTToken> tokens = new LinkedList<>();
 
         TokenLParen lparen = new TokenLParen( tLParen );
         TokenRParen rparen = new TokenRParen( tRParen );

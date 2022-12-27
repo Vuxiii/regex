@@ -25,6 +25,18 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>com.vuxiii</groupId>
+      <artifactId>utils</artifactId>
+      <version>1.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vuxiii</groupId>
+      <artifactId>parsley</artifactId>
+      <version>1.0</version>
+    </dependency>
   </dependencies>
 
   <!-- <maven.compiler.release>11</maven.compiler.release> -->

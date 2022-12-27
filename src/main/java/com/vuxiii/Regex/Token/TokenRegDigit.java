@@ -2,8 +2,9 @@ package com.vuxiii.Regex.Token;
 
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
+import com.vuxiii.LR.Records.ASTToken;
 
-public class TokenRegDigit implements Token, TokenNumber {
+public class TokenRegDigit implements ASTToken, TokenNumber {
     public final Integer value;
     public final Term term;
 

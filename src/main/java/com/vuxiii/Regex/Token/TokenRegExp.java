@@ -1,7 +1,8 @@
 package com.vuxiii.Regex.Token;
 import com.vuxiii.LR.Records.Term;
 import com.vuxiii.Visitor.*;
-public class TokenRegExp implements Token {
+import com.vuxiii.LR.Records.ASTToken;
+public class TokenRegExp implements ASTToken {
 
     public final Term nonTerminal;
     public final TokenRegUnion left;
