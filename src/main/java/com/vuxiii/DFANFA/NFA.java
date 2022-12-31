@@ -409,7 +409,7 @@ public class NFA<T> implements NameInterface {
             }
             if ( dfa.isFinal ) {
                 dfa.constructor = lowestNFA.constructor; // LOGIC BUG IN THIS LINE (NEED TO FIGURE OUT WHICH OF THE NFAS TO COPY FROM)
-                System.out.println( "DFA: " + dfa.name + " -> " + dfa.constructor.apply("") );
+                // System.out.println( "DFA: " + dfa.name + " -> " + dfa.constructor.apply("") );
             }
 
         }

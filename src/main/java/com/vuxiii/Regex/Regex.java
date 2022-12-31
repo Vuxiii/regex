@@ -67,7 +67,7 @@ public class Regex<T> {
     public List<T> match( String input ) {
         List<T> output = new LinkedList<>();
         // System.out.println( "\n".repeat(3) );
-        // System.out.println( DFA_state.getStringRepresentation(dfa) );
+        // System.out.println( DFA.getStringRepresentation(dfa) );
         Scanner in = new Scanner( input );
         DFA<T> current = dfa;
         boolean foundMatch = false;
@@ -77,6 +77,7 @@ public class Regex<T> {
             int start = 0;
             int end = 0;
             while( start < line.length() ) {
+                // System.out.println( "LOOP" );
                 int i = start;
                 char c = line.charAt( i );
                 // System.out.println( "At i = " + i );
