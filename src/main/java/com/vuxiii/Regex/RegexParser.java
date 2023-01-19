@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import com.vuxiii.DFANFA.DFA;
+import com.vuxiii.DFANFA.MatchInfo;
 import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.Grammar;
 import com.vuxiii.LR.LRParser;
@@ -62,7 +63,7 @@ public class RegexParser {
 
     // private static DFA_state regexDFA;
 
-    public static<T> NFA<T> compileRegex( String regex, Function<String, T> constructor, int prio ) { 
+    public static<T> NFA<T> compileRegex( String regex, Function<MatchInfo, T> constructor, int prio ) { 
         if ( firstSetup )
             setup();
         firstSetup = false;

@@ -10,7 +10,7 @@ public class DFA<T> implements NameInterface {
     private static int c = 0;
     public String name;
 
-    public Function<String, T> constructor;
+    public Function<MatchInfo, T> constructor;
 
     public boolean isFinal = false;
     List<Edge<DFA<T>>> out;

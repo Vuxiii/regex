@@ -6,6 +6,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 import com.vuxiii.DFANFA.DFA;
+import com.vuxiii.DFANFA.MatchInfo;
 import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.Grammar;
 
@@ -21,12 +22,12 @@ public class Regex<T> {
         dfa = NFA.toDFA( nfa );
     }
 
-    public Regex( String regex, Function<String, T> constructor ) { 
+    public Regex( String regex, Function<MatchInfo, T> constructor ) { 
         addRegex( regex, constructor, 0 );
         // this.constructor = constructor;
     }
 
-    public Regex( String regex, Function<String, T> constructor, int priority ) { 
+    public Regex( String regex, Function<MatchInfo, T> constructor, int priority ) { 
         addRegex( regex, constructor, priority );
         // this.constructor = constructor;
     }
@@ -43,7 +44,7 @@ public class Regex<T> {
 
 
 
-    public void addRegex( String regex, Function<String, T> constructor, int priority ) { // Convert the regex to NFA and add it to the internal NFA
+    public void addRegex( String regex, Function<MatchInfo, T> constructor, int priority ) { // Convert the regex to NFA and add it to the internal NFA
         NFA<T> n = RegexParser.compileRegex( regex, constructor, priority );
         nfa.addEdge( n ); // add edge to DFA!!!!
         // System.out.println( "-".repeat(10) );
@@ -51,7 +52,7 @@ public class Regex<T> {
         // System.out.println( "-".repeat(10) );
     }
 
-    public void addRegex( String regex, Function<String, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
+    public void addRegex( String regex, Function<MatchInfo, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
         NFA<T> n = RegexParser.compileRegex( regex, constructor, 0 );
         nfa.addEdge( n ); // add edge to DFA!!!!
         // System.out.println( "-".repeat(10) );
@@ -71,8 +72,10 @@ public class Regex<T> {
         Scanner in = new Scanner( input );
         DFA<T> current = dfa;
         boolean foundMatch = false;
+        int lineNumber = 0;
         while( in.hasNextLine() ) {
             String line = in.nextLine();
+            lineNumber++;
 
             int start = 0;
             int end = 0;
@@ -93,7 +96,7 @@ public class Regex<T> {
                 if ( foundMatch ) {
                     if ( current.isFinal ) {
                         // System.out.println( "Match -> " + line.substring(start, end) );
-                        output.add( current.constructor.apply( line.substring(start, end) ) ); // TODO: CHANGE ME
+                        output.add( current.constructor.apply( new MatchInfo( line.substring(start, end), lineNumber, start ) ) );
                     }else
                         System.out.println( "Match not finished -> " + line.substring(start, end) );
                     current = dfa;

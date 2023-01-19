@@ -28,7 +28,7 @@ public class NFA<T> implements NameInterface {
     List<Edge<NFA<T>>> in;
     public static int c = 0;
 
-    public Function<String, T> constructor;
+    public Function<MatchInfo, T> constructor;
 
     public NFA() {
         this( "", false );
