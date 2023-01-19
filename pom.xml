@@ -6,7 +6,7 @@
 
   <groupId>com.vuxiii</groupId>
   <artifactId>regex</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
 
   <name>regex</name>
   <!-- FIXME change it to the project's website -->
@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.vuxiii</groupId>
       <artifactId>parsley</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
     </dependency>
   </dependencies>
 
