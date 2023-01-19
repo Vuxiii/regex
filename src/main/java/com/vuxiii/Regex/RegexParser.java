@@ -265,8 +265,10 @@ public class RegexParser {
         }
         tokens.add( tOEP );
 
-        Utils.log( "Input tokens:" );
-        Utils.log( tokens );
+        if ( RegexSettings.showParsingDebugInfo ) {
+            Utils.log( "Input tokens:" );
+            Utils.log( tokens );
+        }
 
         return tokens;
     

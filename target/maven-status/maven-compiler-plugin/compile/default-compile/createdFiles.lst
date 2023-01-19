@@ -28,6 +28,7 @@ com/vuxiii/Regex/Token/TokenRegIntNumber.class
 com/vuxiii/Regex/Token/TokenRegStar.class
 com/vuxiii/DFANFA/MatchInfo.class
 com/vuxiii/Regex/Token/TokenPlus.class
+com/vuxiii/Regex/RegexSettings.class
 com/vuxiii/Regex/Token/TokenCharKind.class
 com/vuxiii/Regex/Token/TokenRCurl.class
 com/vuxiii/TokenAlphs.class
