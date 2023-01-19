@@ -7,6 +7,7 @@ import com.vuxiii.DFANFA.Edge;
 import com.vuxiii.DFANFA.EdgeKind;
 import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.ParsingStep;
+import com.vuxiii.LR.Settings;
 import com.vuxiii.Regex.Regex;
 import com.vuxiii.LR.Records.ASTToken;
 
@@ -48,7 +49,7 @@ public class App {
         // regex.compile();
 
 
-        ParsingStep.showSteps = false;
+        Settings.showParsingSteps = false;
         // regex.match( "Hej me ig :)daad" );
      
         // regex = new Regex<>( "=", (id) -> new TokenAssignment( id ) );
