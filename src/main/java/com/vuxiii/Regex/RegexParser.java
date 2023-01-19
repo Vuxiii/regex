@@ -104,7 +104,6 @@ public class RegexParser {
         // System.out.println( currentStep );
         ASTToken AST = currentStep.getResult();
 
-        System.out.println( "Final result is: " + AST );
         return AST;
     }
 
@@ -482,7 +481,7 @@ public class RegexParser {
         g.addRuleWithReduceFunction( nCharRange, List.of( tChar ), (tokens) -> {
             TokenChar token = (TokenChar) tokens.get(0);
             if ( !Character.isLetter( token.value ) ) {
-                System.out.println( "Parsing error. Expected letter, got " + token.value );
+                System.out.println( "Regex Parsing error. Expected letter, got " + token.value );
                 System.exit(-1);
             }
             return new TokenRegCharRange( token, nCharRange );
@@ -493,11 +492,11 @@ public class RegexParser {
             
             TokenChar right = (TokenChar) tokens.get(4);
             if ( !Character.isLetter( left.value ) ) {
-                System.out.println( "Parsing error. Expected letter, got " + left.value );
+                System.out.println( "Regex Parsing error. Expected letter, got " + left.value );
                 System.exit(-1);
             }
             if ( !Character.isLetter( right.value ) ) {
-                System.out.println( "Parsing error. Expected letter, got " + right.value );
+                System.out.println( "Regex Parsing error. Expected letter, got " + right.value );
                 System.exit(-1);
             }
 

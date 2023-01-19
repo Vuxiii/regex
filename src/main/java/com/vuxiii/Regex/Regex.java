@@ -97,7 +97,7 @@ public class Regex<T> {
                     if ( current.isFinal ) {
                         // System.out.println( "Match -> " + line.substring(start, end) );
                         output.add( current.constructor.apply( new MatchInfo( line.substring(start, end), lineNumber, start ) ) );
-                    }else
+                    }else if ( RegexSettings.showMatchFailures )
                         System.out.println( "Match not finished -> " + line.substring(start, end) );
                     current = dfa;
                     start = end;
