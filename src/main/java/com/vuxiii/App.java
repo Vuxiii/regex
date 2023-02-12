@@ -17,30 +17,6 @@ public class App {
         
         regexSample();
 
-        // nfafix();
-        // sample();
-
-        // NFA<Token> one = new NFA<>();
-        // NFA<Token> two = new NFA<>();
-        // NFA<Token> three = new NFA<>();
-        // NFA<Token> four = new NFA<>();
-        // four.isFinal = true;
-        // one.addEdge('a', two );
-        // one.addEdge( EdgeKind.EPSILON, two );
-        // two.addEdge( EdgeKind.ANY, three );
-        // two.addEdge( 'b', four );
-        // three.addEdge( 'c' , four );
-
-
-        // System.out.println( NFA.getStringRepresentation(one));
-
-
-        // System.out.println( "=".repeat(60) );
-        
-        // DFA<Token> dfa = NFA.toDFA( one );
-
-        // System.out.println( DFA.getStringRepresentation( dfa ) );
-
     }
 
     public static void regexSample() {
@@ -59,7 +35,7 @@ public class App {
         // regex.addRegex( ";", (intVal) -> new TokenAlphs( "END " + intVal ) );
         // regex.addRegex( "[:alpha:].*", (id) -> new TokenAlphs( id ), 999999999 );
         // regex.addRegex( "( |\n)*", (rm) -> new TokenAlphs( "Ignore" ) ); 
-        // regex.addRegex( "[0-5]", (id) -> new TokenAlphs( id ) );
+        regex.addRegex( ' ' + ".*" + ' ', (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[0-5]b", (id) -> new TokenAlphs( id ) );
         // regex.addRegex( "t[A-F]b", (id) -> new TokenAlphs( id ) );

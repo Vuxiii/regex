@@ -263,6 +263,8 @@ public class NFA<T> implements NameInterface {
 
             // System.out.println( "Current state " + name );
 
+            System.out.println( "closure: " + closure );
+
             for ( NFA<T> state : closure ) {
                 // System.out.println( "At NFA: " + state.name );
                 for ( Edge<NFA<T>> edge : state.out ) {
@@ -292,8 +294,9 @@ public class NFA<T> implements NameInterface {
                     // Add the STD
                     reachable.get( edge.accept ).add( edge.to );
 
-                    // ADd the ANY
-                    reachable.get( edge.accept ).addAll( extractToStates(anyReachable
+                    // Add the ANY
+                    if ( !Edge.not_acceptable_by_any.contains( edge.accept ) )
+                        reachable.get( edge.accept ).addAll( extractToStates(anyReachable
                                                     .parallelStream()
                                                     .filter( anyEdge -> !anyEdge.from.equals( edge.from ) )
                                                     .filter( anyEdge -> !anyEdge.to.equals( edge.from ) )
@@ -338,22 +341,22 @@ public class NFA<T> implements NameInterface {
             // Create all the reachable states.
             for ( Character c : reachable.keySet() ) {
                 
-                // System.out.println( "At charachter: " + c);
+                System.out.println( "\tAt charachter: '" + c + "'");
                 Set<NFA<T>> NFAStates = reachable.get( c );
-                // System.out.println( NFAStates );
+                System.out.println( "\tNFA STates " + NFAStates );
                 DFA<T> newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
-                    // System.out.println( "State: " + genNameFromStates( NFAStates ) + " already exists" );
+                    System.out.println( "\tState: " + genNameFromStates( NFAStates ) + " already exists" );
                     newState = cachedStates.get( NFAStates );
                 }  else {
                     newState = new DFA<T>( genNameFromStates( NFAStates ) );
                     cachedStates.put( NFAStates, newState );
                     DFAToNFA.put( newState, NFAStates );
-                    // System.out.println( "Creating new State: " + newState.name );
+                    System.out.println( "\tCreating new State: " + newState.name );
                     queue.add( newState );
                 }
-                // System.out.println( "New State: " + newState.name );
+                System.out.println( "\tNew State: " + newState.name );
 
                 // Add the edge to it.
                 current.addEdge( c, newState ); 

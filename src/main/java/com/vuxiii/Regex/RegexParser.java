@@ -166,8 +166,8 @@ public class RegexParser {
                         i += "[:alpha:]".length() - 1; // -1?
                     } else {
                         if ( regex.substring(i).matches( "^\\[\\d*-\\d*\\].*" ) ) {
-                            String s = regex.substring(i+1, regex.substring(i).indexOf("]")+1 );
-
+                            String s = regex.substring(i+1, regex.substring(i).indexOf("]") );
+                            System.out.println( s );
                             int left = Integer.valueOf( s.substring(0, s.indexOf("-") ) );
                             int right = Integer.valueOf( s.substring( s.indexOf("-")+1 ) );
                             // System.out.println( s + " " + left + " " + " " + right );

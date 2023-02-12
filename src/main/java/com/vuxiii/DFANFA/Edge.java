@@ -1,5 +1,8 @@
 package com.vuxiii.DFANFA;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * This class represents edges between DFA_states
  */
@@ -45,6 +48,14 @@ public class Edge<StateType extends NameInterface> {
         return true;
     }
 
+    // List of elements that the ANY edge doesn't accept.
+    public static final Set<Character> not_acceptable_by_any = new HashSet<>();
+    static { 
+        not_acceptable_by_any.add( '\n' );
+        not_acceptable_by_any.add( ' ' );
+        not_acceptable_by_any.add( '"' );
+    }
+
     /**
      * Returns Whether or not this edge can consume the given char.
      * It does not return true if the edge is an epsilon edge.
@@ -52,7 +63,7 @@ public class Edge<StateType extends NameInterface> {
      * @return Whether or not this edge can consume the given char
      */
     public boolean canConsume( char c ) {
-        if ( kind == EdgeKind.ANY && c != '\n' && c != ' ' && c != '"' ) return true;
+        if ( kind == EdgeKind.ANY && !not_acceptable_by_any.contains( c ) ) return true;
         if ( kind == EdgeKind.DIGITS && Character.isDigit(c) ) return true;
         if ( kind == EdgeKind.ALPHS && Character.isLetter(c) ) return true;
         if ( kind == EdgeKind.STD && c == accept ) return true;
