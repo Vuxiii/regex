@@ -263,7 +263,7 @@ public class NFA<T> implements NameInterface {
 
             // System.out.println( "Current state " + name );
 
-            System.out.println( "closure: " + closure );
+            // System.out.println( "closure: " + closure );
 
             for ( NFA<T> state : closure ) {
                 // System.out.println( "At NFA: " + state.name );
@@ -341,22 +341,22 @@ public class NFA<T> implements NameInterface {
             // Create all the reachable states.
             for ( Character c : reachable.keySet() ) {
                 
-                System.out.println( "\tAt charachter: '" + c + "'");
+                // System.out.println( "\tAt charachter: '" + c + "'");
                 Set<NFA<T>> NFAStates = reachable.get( c );
-                System.out.println( "\tNFA STates " + NFAStates );
+                // System.out.println( "\tNFA STates " + NFAStates );
                 DFA<T> newState;
                 // Check if it has already been made
                 if ( cachedStates.containsKey( NFAStates ) ) {
-                    System.out.println( "\tState: " + genNameFromStates( NFAStates ) + " already exists" );
+                    // System.out.println( "\tState: " + genNameFromStates( NFAStates ) + " already exists" );
                     newState = cachedStates.get( NFAStates );
                 }  else {
                     newState = new DFA<T>( genNameFromStates( NFAStates ) );
                     cachedStates.put( NFAStates, newState );
                     DFAToNFA.put( newState, NFAStates );
-                    System.out.println( "\tCreating new State: " + newState.name );
+                    // System.out.println( "\tCreating new State: " + newState.name );
                     queue.add( newState );
                 }
-                System.out.println( "\tNew State: " + newState.name );
+                // System.out.println( "\tNew State: " + newState.name );
 
                 // Add the edge to it.
                 current.addEdge( c, newState ); 

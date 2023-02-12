@@ -114,9 +114,9 @@ public class Regex<T> {
     }
 
     public void compile() { // Convert the internal NFA to a DFA
-        System.out.println( "FINAL------------------------------------" );
-        System.out.println( NFA.getStringRepresentation(nfa) );
-        System.out.println( "FINAL------------------------------------" );
+        // System.out.println( "FINAL------------------------------------" );
+        // System.out.println( NFA.getStringRepresentation(nfa) );
+        // System.out.println( "FINAL------------------------------------" );
         
         dfa = NFA.toDFA( nfa );
         // System.out.println( "Result DFA--------------------------------------------------------");
