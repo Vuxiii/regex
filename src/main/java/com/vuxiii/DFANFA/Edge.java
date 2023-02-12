@@ -52,7 +52,7 @@ public class Edge<StateType extends NameInterface> {
      * @return Whether or not this edge can consume the given char
      */
     public boolean canConsume( char c ) {
-        if ( kind == EdgeKind.ANY && c != '\n' && c != ' ' ) return true;
+        if ( kind == EdgeKind.ANY && c != '\n' && c != ' ' && c != '"' ) return true;
         if ( kind == EdgeKind.DIGITS && Character.isDigit(c) ) return true;
         if ( kind == EdgeKind.ALPHS && Character.isLetter(c) ) return true;
         if ( kind == EdgeKind.STD && c == accept ) return true;
