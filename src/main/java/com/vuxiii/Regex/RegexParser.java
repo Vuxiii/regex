@@ -10,6 +10,7 @@ import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.Grammar;
 import com.vuxiii.LR.LRParser;
 import com.vuxiii.LR.ParseTable;
+import com.vuxiii.LR.ParserException;
 import com.vuxiii.LR.ParsingStep;
 import com.vuxiii.LR.Records.LRRule;
 import com.vuxiii.LR.Records.NonTerminal;
@@ -63,7 +64,7 @@ public class RegexParser {
 
     // private static DFA_state regexDFA;
 
-    public static<T> NFA<T> compileRegex( String regex, Function<MatchInfo, T> constructor, int prio ) { 
+    public static<T> NFA<T> compileRegex( String regex, Function<MatchInfo, T> constructor, int prio ) throws ParserException { 
         if ( firstSetup )
             setup();
         firstSetup = false;
@@ -92,7 +93,7 @@ public class RegexParser {
         // return null;
     }
 
-    private static ASTToken getAST( List<com.vuxiii.LR.Records.ASTToken> tokens ) {
+    private static ASTToken getAST( List<com.vuxiii.LR.Records.ASTToken> tokens ) throws ParserException {
         List<ParserState> stack = new LinkedList<>();
         stack.add( table.getStartState() );
         ParsingStep currentStep = new ParsingStep(tokens, new LinkedList<>(), stack, new LinkedList<>(), table );
@@ -316,38 +317,6 @@ public class RegexParser {
         tRParen = new Terminal( ")" ); // debug.
 
 
-        // LRRule rule0 = g.add_rule( nS, List.of( nExp, tDollar ) );
-        
-        // LRRule rule1  = g.add_rule( nExp, List.of( nUnion, nExp ) );
-        // LRRule rule2  = g.add_rule( nExp, List.of( nUnion, nRepetition ) );
-        // LRRule rule3  = g.add_rule( nExp, List.of( nUnion ) );
-        // LRRule rule4  = g.add_rule( nConcat, List.of( nUdtryk, tConcat, nConcat ) );
-        // LRRule rule5  = g.add_rule( nConcat, List.of( nUdtryk ) );
-        // LRRule rule4  = g.add_rule( nConcat, List.of( nSymbol, nConcat ) );
-        // LRRule rule5  = g.add_rule( nConcat, List.of( nSymbol ) );
-        // LRRule rule6  = g.add_rule( nUnion, List.of( nConcat, tUnion, nUnion ) );
-        // LRRule rule7  = g.add_rule( nUnion, List.of( nConcat ) );
-        // LRRule rule8  = g.add_rule( nRepetition, List.of( nStar ) );
-        // LRRule rule9  = g.add_rule( nRepetition, List.of( nOneMore ) );
-        // LRRule rule10 = g.add_rule( nRepetition, List.of( nZeroOne ) );
-        // LRRule rule11 = g.add_rule( nRepetition, List.of( tLCurl, tNumber, tRCurl ) );
-        // LRRule rule12 = g.add_rule( nRepetition, List.of( tLCurl, tNumber, tComma, tNumber, tRCurl ) );
-        // LRRule rule13 = g.add_rule( nOneMore, List.of( nConcat, nStar ) );
-        // LRRule rule14 = g.add_rule( nZeroOne, List.of( nConcat ) );
-        // LRRule rule15 = g.add_rule( nZeroOne, List.of( tEpsilon ) );
-        // LRRule rule16 = g.add_rule( nStar, List.of( tStar ) );
-        
-        // LRRule rule17 = g.add_rule( nRange, List.of( tLBracket, nUdtryk, tDash, nUdtryk, tRBracket ) );
-        // LRRule rule18 = g.add_rule( nRange, List.of( tNumber ) );
-        // LRRule rule19 = g.add_rule( nRange, List.of( tAlphs ) );
-        
-        // LRRule rule19 = g.add_rule( nUdtryk, List.of( nSymbol, nRepetition ) );
-        // LRRule rule20 = g.add_rule( nUdtryk, List.of( nSymbol ) );
-        // LRRule rule211 = g.add_rule( nSymbol, List.of( tLParen, nExp, tRParen ) );
-        // LRRule rule21 = g.add_rule( nSymbol, List.of( tChar ) );
-
-
-
         g.addRuleWithReduceFunction( nS, List.of( nExp, tDollar ), (tokens) -> {
             TokenRegExp left = (TokenRegExp) tokens.get(0);
             TokenEOP right = (TokenEOP) tokens.get(1);
@@ -545,7 +514,7 @@ public class RegexParser {
         //     return new TokenRegSymbol( token, nSymbol );
         // } );
         
-        table = LRParser.parse( g, nS );
+        table = LRParser.compile( g, nS );
 
     }
 }

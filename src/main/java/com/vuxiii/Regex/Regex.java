@@ -9,6 +9,7 @@ import com.vuxiii.DFANFA.DFA;
 import com.vuxiii.DFANFA.MatchInfo;
 import com.vuxiii.DFANFA.NFA;
 import com.vuxiii.LR.Grammar;
+import com.vuxiii.LR.ParserException;
 
 public class Regex<T> {
     public DFA<T> dfa;
@@ -22,42 +23,26 @@ public class Regex<T> {
         dfa = NFA.toDFA( nfa );
     }
 
-    public Regex( String regex, Function<MatchInfo, T> constructor ) { 
+    public Regex( String regex, Function<MatchInfo, T> constructor ) throws ParserException { 
         addRegex( regex, constructor, 0 );
         // this.constructor = constructor;
     }
 
-    public Regex( String regex, Function<MatchInfo, T> constructor, int priority ) { 
+    public Regex( String regex, Function<MatchInfo, T> constructor, int priority ) throws ParserException { 
         addRegex( regex, constructor, priority );
         // this.constructor = constructor;
     }
 
 
-    // public Regex( String regex ) { 
-    //     addRegex( regex, null );
-    // }
 
-    // public Regex( List<String> regexes ) {
-    //     for ( String regex : regexes )
-    //         addRegex( regex );
-    // }
-
-
-
-    public void addRegex( String regex, Function<MatchInfo, T> constructor, int priority ) { // Convert the regex to NFA and add it to the internal NFA
+    public void addRegex( String regex, Function<MatchInfo, T> constructor, int priority ) throws ParserException { // Convert the regex to NFA and add it to the internal NFA
         NFA<T> n = RegexParser.compileRegex( regex, constructor, priority );
         nfa.addEdge( n ); // add edge to DFA!!!!
-        // System.out.println( "-".repeat(10) );
-        // System.out.println( NFA_state.getStringRepresentation(n) );
-        // System.out.println( "-".repeat(10) );
     }
 
-    public void addRegex( String regex, Function<MatchInfo, T> constructor ) { // Convert the regex to NFA and add it to the internal NFA
+    public void addRegex( String regex, Function<MatchInfo, T> constructor ) throws ParserException { // Convert the regex to NFA and add it to the internal NFA
         NFA<T> n = RegexParser.compileRegex( regex, constructor, 0 );
         nfa.addEdge( n ); // add edge to DFA!!!!
-        // System.out.println( "-".repeat(10) );
-        // System.out.println( NFA_state.getStringRepresentation(n) );
-        // System.out.println( "-".repeat(10) );
     }
 
 
