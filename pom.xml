@@ -35,7 +35,7 @@
     <dependency>
       <groupId>com.vuxiii</groupId>
       <artifactId>parsley</artifactId>
-      <version>1.2.5</version>
+      <version>1.2.7</version>
     </dependency>
   </dependencies>
 
