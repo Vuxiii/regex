@@ -8,7 +8,6 @@ import java.util.function.Function;
 import com.vuxiii.DFANFA.DFA;
 import com.vuxiii.DFANFA.MatchInfo;
 import com.vuxiii.DFANFA.NFA;
-import com.vuxiii.LR.Grammar;
 import com.vuxiii.LR.ParserException;
 
 public class Regex<T> {
